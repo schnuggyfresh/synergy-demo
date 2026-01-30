@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Synergy Smart Home — Command Center</title>
+<title>Synergy Smart Home — Command Center v4</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -15,140 +15,68 @@
 --profit:#00ff88;--warn:#f59e0b;--crit:#ef4444;
 --text:#e2e8f0;--muted:#64748b;--dim:#1e293b;
 }
-html,body{height:100%;overflow:hidden}
-body{
-background:var(--bg);color:var(--text);
-font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro','Segoe UI','Helvetica Neue',sans-serif;
-}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro','Segoe UI','Helvetica Neue',sans-serif;}
 ::selection{background:var(--cyan);color:var(--bg)}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
 
 /* HEADER */
-.header{
-display:flex;align-items:center;justify-content:space-between;
-padding:10px 20px;
-background:rgba(10,14,23,0.9);
-backdrop-filter:blur(20px);
-border-bottom:1px solid var(--border);
-height:48px;
-}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;
+background:rgba(10,14,23,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:48px;z-index:10;position:relative;}
 .header-left{display:flex;align-items:center;gap:14px}
-.logo{
-font-size:14px;font-weight:700;letter-spacing:1.5px;
-background:linear-gradient(135deg,#fff,#94a3b8);
--webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.ai-status{
-display:flex;align-items:center;gap:6px;
-font-size:11px;color:var(--green);font-weight:500;
-}
-.ai-dot{
-width:7px;height:7px;border-radius:50%;
-background:var(--green);
-box-shadow:0 0 8px var(--green),0 0 16px rgba(16,185,129,0.3);
-animation:pulse 2s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.85)}}
+.logo{font-size:14px;font-weight:700;letter-spacing:1.5px;
+background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ai-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);font-weight:500}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+box-shadow:0 0 8px var(--green),0 0 16px rgba(16,185,129,0.3);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
 .header-right{display:flex;align-items:center;gap:16px}
-.clock{font-size:13px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:0.5px}
-.user-badge{
-font-size:10px;color:var(--muted);
-background:rgba(255,255,255,0.05);
-padding:4px 10px;border-radius:20px;
-border:1px solid var(--border);
-}
+.clock{font-size:13px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.user-badge{font-size:10px;color:var(--muted);background:rgba(255,255,255,.05);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
 
-/* GRID */
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr 1fr 1fr;
-grid-template-rows:auto auto auto auto;
-gap:10px;
-padding:10px;
-height:calc(100vh - 48px - 36px);
-overflow:hidden;
-}
+/* MAIN LAYOUT */
+.main-scroll{height:calc(100vh - 48px - 36px);overflow-y:auto;overflow-x:hidden;}
+.top-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;padding:10px 10px 0;}
+.map-row{display:grid;grid-template-columns:3fr 2fr;gap:10px;padding:10px;}
+.map-sidebar{display:flex;flex-direction:column;gap:10px;}
 
 /* WIDGET BASE */
-.widget{
-background:var(--widget);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:20px;
-padding:16px;
-position:relative;
-overflow:hidden;
-display:flex;flex-direction:column;
-}
-.widget::before{
-content:'';position:absolute;top:0;left:0;right:0;height:1px;
-background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
-}
-.widget-title{
-font-size:10px;font-weight:600;letter-spacing:1.2px;
-text-transform:uppercase;color:var(--muted);
-margin-bottom:10px;
-}
-
-/* LARGE */
-.widget.lg{grid-row:span 1}
-/* Revenue */
-.w-revenue{grid-column:1;grid-row:1}
-.w-pipeline{grid-column:2;grid-row:1}
-.w-profit{grid-column:3;grid-row:1}
-.w-marketing{grid-column:4;grid-row:1/3}
-.w-sales{grid-column:1;grid-row:2}
-.w-projects{grid-column:2;grid-row:2}
-.w-social{grid-column:3;grid-row:2}
-.w-satisfaction{grid-column:1;grid-row:3}
-.w-cashflow{grid-column:2;grid-row:3}
-.w-inventory{grid-column:3;grid-row:3}
-.w-ai-feed{grid-column:4;grid-row:3}
+.widget{background:var(--widget);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;
+padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.widget::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);}
+.widget-title{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 
 /* RING STYLES */
 .ring-container{display:flex;align-items:center;justify-content:center;flex:1;position:relative}
-.ring-svg{width:100%;max-width:160px;height:auto}
-.ring-center{
-position:absolute;text-align:center;
-top:50%;left:50%;transform:translate(-50%,-50%);
-}
-.ring-big-num{font-size:26px;font-weight:700;color:#fff;line-height:1}
+.ring-svg{width:100%;max-width:140px;height:auto}
+.ring-center{position:absolute;text-align:center;top:50%;left:50%;transform:translate(-50%,-50%)}
+.ring-big-num{font-size:24px;font-weight:700;color:#fff;line-height:1}
 .ring-sub-label{font-size:9px;color:var(--muted);margin-top:2px}
-.ring-stats{
-display:flex;gap:16px;justify-content:center;
-margin-top:8px;
-}
+.ring-stats{display:flex;gap:14px;justify-content:center;margin-top:6px}
 .ring-stat{text-align:center}
-.ring-stat-val{font-size:13px;font-weight:600;color:#fff}
-.ring-stat-label{font-size:8px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase}
+.ring-stat-val{font-size:12px;font-weight:600;color:#fff}
+.ring-stat-label{font-size:8px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.ring-progress{transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)}
 
 /* MINI RING */
 .mini-ring{width:32px;height:32px;flex-shrink:0}
 .mini-ring-sm{width:26px;height:26px;flex-shrink:0}
 
 /* PROFIT */
-.profit-num{
-font-size:32px;font-weight:700;
-color:var(--profit);
-text-shadow:0 0 30px rgba(0,255,136,0.3);
-text-align:center;letter-spacing:1px;
-font-variant-numeric:tabular-nums;
-}
-.profit-meta{display:flex;gap:12px;justify-content:center;margin-top:8px}
+.profit-num{font-size:28px;font-weight:700;color:var(--profit);text-shadow:0 0 30px rgba(0,255,136,.3);
+text-align:center;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.profit-meta{display:flex;gap:12px;justify-content:center;margin-top:6px}
 .profit-meta-item{text-align:center}
-.profit-meta-val{font-size:12px;font-weight:600;color:var(--cyan)}
-.profit-meta-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.profit-ticker{font-size:10px;color:var(--muted);text-align:center;margin-top:6px}
+.profit-meta-val{font-size:11px;font-weight:600;color:var(--cyan)}
+.profit-meta-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.profit-ticker{font-size:10px;color:var(--muted);text-align:center;margin-top:4px}
 .profit-ticker .arr{color:var(--profit)}
 
 /* ROW ITEMS */
-.row-item{
-display:flex;align-items:center;gap:10px;
-padding:6px 0;
-border-bottom:1px solid rgba(255,255,255,0.03);
-}
+.row-item{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .row-item:last-child{border-bottom:none}
 .row-info{flex:1;min-width:0}
 .row-label{font-size:11px;color:var(--text);font-weight:500}
@@ -156,206 +84,239 @@ border-bottom:1px solid rgba(255,255,255,0.03);
 .row-val{font-size:11px;font-weight:600;text-align:right;white-space:nowrap}
 
 /* METRIC ROWS */
-.metric{
-display:flex;justify-content:space-between;align-items:center;
-padding:5px 0;
-border-bottom:1px solid rgba(255,255,255,0.03);
-}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .metric:last-child{border-bottom:none}
 .metric-label{font-size:11px;color:var(--text)}
 .metric-val{font-size:12px;font-weight:600}
-.metric-val.green{color:var(--green)}
-.metric-val.cyan{color:var(--cyan)}
-.metric-val.warn{color:var(--warn)}
-.metric-val.crit{color:var(--crit)}
-.metric-val.blue{color:var(--blue)}
-.metric-val.purple{color:var(--purple)}
+.metric-val.green{color:var(--green)}.metric-val.cyan{color:var(--cyan)}.metric-val.warn{color:var(--warn)}
+.metric-val.crit{color:var(--crit)}.metric-val.blue{color:var(--blue)}.metric-val.purple{color:var(--purple)}
 
-/* HIGHLIGHT CARD */
-.highlight{
-background:rgba(255,255,255,0.03);
-border-radius:12px;padding:8px 10px;
-margin-top:6px;
-}
-.highlight-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.highlight-val{font-size:12px;font-weight:600;color:var(--warn);margin-top:1px}
+/* HIGHLIGHT */
+.highlight{background:rgba(255,255,255,.03);border-radius:12px;padding:7px 10px;margin-top:5px}
+.highlight-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.highlight-val{font-size:11px;font-weight:600;color:var(--warn);margin-top:1px}
 
-/* SOCIAL PLATFORM */
-.social-row{
-display:flex;align-items:center;gap:8px;
-padding:5px 0;
-border-bottom:1px solid rgba(255,255,255,0.03);
-}
-.social-row:last-child{border-bottom:none}
-.social-icon{font-size:14px;width:20px;text-align:center}
-.social-name{font-size:11px;color:var(--text);flex:1}
-.social-num{font-size:12px;font-weight:600;color:#fff}
-.social-delta{font-size:9px;color:var(--green);margin-left:4px}
+/* PIPELINE */
+.pipeline-container{display:flex;align-items:center;justify-content:center;flex:1}
+.pipeline-svg{width:100%;max-width:130px}
+.pipeline-legend{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.pipeline-legend-item{display:flex;align-items:center;gap:6px;font-size:10px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-label{color:var(--muted);flex:1}
+.legend-val{font-weight:600;color:#fff}
 
 /* PROJECT BAR */
-.proj-item{
-display:flex;align-items:center;gap:8px;
-padding:6px 0;
-border-bottom:1px solid rgba(255,255,255,0.03);
-}
+.proj-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .proj-item:last-child{border-bottom:none}
 .proj-info{flex:1;min-width:0}
 .proj-name{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .proj-pct{font-size:9px;font-weight:600;width:32px;text-align:right}
 
 /* SUB STATUS */
-.sub-status-row{
-display:flex;gap:8px;margin-top:6px;
-}
-.sub-pill{
-font-size:9px;font-weight:600;
-padding:3px 8px;border-radius:10px;
-}
-.sub-pill.deployed{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3)}
-.sub-pill.standby{background:rgba(245,158,11,0.15);color:var(--warn);border:1px solid rgba(245,158,11,0.3)}
-.sub-pill.off{background:rgba(100,116,139,0.15);color:var(--muted);border:1px solid rgba(100,116,139,0.3)}
+.sub-status-row{display:flex;gap:6px;margin-top:5px}
+.sub-pill{font-size:9px;font-weight:600;padding:3px 8px;border-radius:10px}
+.sub-pill.deployed{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.sub-pill.standby{background:rgba(245,158,11,.15);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.sub-pill.off{background:rgba(100,116,139,.15);color:var(--muted);border:1px solid rgba(100,116,139,.3)}
+
+/* SOCIAL */
+.social-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.social-row:last-child{border-bottom:none}
+.social-icon{font-size:14px;width:20px;text-align:center}
+.social-name{font-size:11px;color:var(--text);flex:1}
+.social-num{font-size:12px;font-weight:600;color:#fff}
+.social-delta{font-size:9px;color:var(--green);margin-left:4px}
 
 /* SATISFACTION */
-.sat-score{
-font-size:36px;font-weight:700;
-background:linear-gradient(135deg,var(--green),var(--cyan));
--webkit-background-clip:text;-webkit-text-fill-color:transparent;
-text-align:center;line-height:1;
-}
-.sat-label{font-size:10px;color:var(--muted);text-align:center;margin-top:2px}
-.stars{color:var(--warn);font-size:13px;text-align:center;margin-top:6px;letter-spacing:1px}
+.stars{color:var(--warn);font-size:12px;text-align:center;margin-top:4px;letter-spacing:1px}
 
 /* CASH BAR */
-.cash-bar-row{
-display:flex;align-items:center;gap:8px;
-padding:5px 0;
-}
-.cash-bar-label{font-size:10px;color:var(--muted);width:70px;text-align:right}
-.cash-bar{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+.cash-bar-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+.cash-bar-label{font-size:10px;color:var(--muted);width:65px;text-align:right}
+.cash-bar{flex:1;height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
 .cash-bar-fill{height:100%;border-radius:4px;transition:width 1.5s ease}
-.cash-bar-val{font-size:11px;font-weight:600;width:55px}
+.cash-bar-val{font-size:11px;font-weight:600;width:50px}
 
 /* INVENTORY */
-.inv-row{
-display:flex;justify-content:space-between;align-items:center;
-padding:5px 0;
-border-bottom:1px solid rgba(255,255,255,0.03);
-}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 .inv-row:last-child{border-bottom:none}
 .inv-label{font-size:11px;color:var(--text)}
-.inv-badge{
-font-size:10px;font-weight:600;
-padding:2px 8px;border-radius:8px;
-}
-.inv-badge.blue{background:rgba(59,130,246,0.15);color:var(--blue)}
-.inv-badge.green{background:rgba(16,185,129,0.15);color:var(--green)}
-.inv-badge.warn{background:rgba(245,158,11,0.15);color:var(--warn)}
-
-/* NEXT DELIVERY */
-.next-delivery{
-margin-top:auto;
-background:rgba(255,255,255,0.03);
-border-radius:10px;padding:6px 8px;
-font-size:9px;color:var(--muted);
-}
+.inv-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+.inv-badge.blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.inv-badge.green{background:rgba(16,185,129,.15);color:var(--green)}
+.inv-badge.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.next-delivery{margin-top:auto;background:rgba(255,255,255,.03);border-radius:10px;padding:5px 8px;font-size:9px;color:var(--muted)}
 .next-delivery strong{color:var(--cyan)}
 
 /* AI TICKER */
-.ticker-strip{
-height:36px;
-background:rgba(10,14,23,0.95);
-backdrop-filter:blur(20px);
-border-top:1px solid var(--border);
-display:flex;align-items:center;
-overflow:hidden;
-position:relative;
+.ticker-strip{height:36px;background:rgba(10,14,23,.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);
+display:flex;align-items:center;overflow:hidden;position:fixed;bottom:0;left:0;right:0;z-index:10;}
+.ticker-label{background:linear-gradient(135deg,var(--green),var(--cyan));color:#000;font-size:9px;font-weight:700;
+padding:4px 12px;letter-spacing:1px;z-index:2;flex-shrink:0}
+.ticker-track{flex:1;overflow:hidden;position:relative}
+.ticker-content{display:flex;white-space:nowrap;animation:tickerScroll 60s linear infinite;font-size:11px;color:var(--text)}
+.ticker-content span{padding:0 24px}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ===== ATLANTA HEAT MAP ===== */
+.map-widget{position:relative;min-height:420px}
+.map-widget .widget-title{position:relative;z-index:2;display:flex;align-items:center;gap:8px}
+.map-legend{display:flex;gap:12px;margin-left:auto;font-size:9px;align-items:center}
+.map-legend-item{display:flex;align-items:center;gap:4px;color:var(--muted)}
+.map-legend-dot{width:8px;height:8px;border-radius:50%}
+.map-svg-wrap{flex:1;position:relative;overflow:hidden;border-radius:12px}
+.map-svg{width:100%;height:100%;min-height:360px}
+
+/* Map neighborhoods */
+.neighborhood-label{font-size:10px;fill:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;pointer-events:none}
+.neighborhood-zone{fill:rgba(255,255,255,.02);stroke:rgba(255,255,255,.04);stroke-width:1;rx:8}
+
+/* Map connectors */
+.map-connector{stroke:rgba(255,255,255,.04);stroke-width:1;stroke-dasharray:4 4}
+
+/* Project dots */
+.project-dot{cursor:pointer;transition:transform .2s ease}
+.project-dot:hover{transform:scale(1.3)}
+.dot-active{fill:var(--green)}
+.dot-quoted{fill:none;stroke:var(--warn);stroke-width:2;stroke-dasharray:4 3}
+.dot-completed{fill:var(--blue)}
+.dot-newlead{fill:none;stroke:var(--blue);stroke-width:2;stroke-dasharray:4 3}
+.dot-glow{fill:none;stroke:var(--green);stroke-width:1;opacity:.4;animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{r:18;opacity:.4}50%{r:28;opacity:0}}
+
+/* Tooltip */
+.map-tooltip{position:absolute;background:rgba(10,14,23,.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);
+border-radius:10px;padding:8px 12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap}
+.map-tooltip.show{opacity:1}
+.tooltip-name{font-size:11px;font-weight:600;color:#fff}
+.tooltip-val{font-size:10px;color:var(--cyan);margin-top:2px}
+.tooltip-status{font-size:9px;color:var(--muted);margin-top:1px}
+
+/* ===== PROJECT DETAIL PANEL ===== */
+.panel-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.panel-backdrop.open{opacity:1;pointer-events:all}
+.detail-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:90vw;z-index:101;
+background:rgba(12,16,24,.97);backdrop-filter:blur(30px);border-left:1px solid rgba(255,255,255,.08);
+transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;overflow-x:hidden}
+.detail-panel.open{transform:translateX(0)}
+.panel-close{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+padding:16px 20px;background:rgba(12,16,24,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.panel-close-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.05);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.panel-close-btn:hover{background:rgba(255,255,255,.12)}
+.panel-status{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.panel-status.active{color:var(--green)}.panel-status.quoted{color:var(--warn)}.panel-status.newlead{color:var(--blue)}
+.panel-status.completed{color:var(--blue)}
+
+.panel-body{padding:20px}
+.panel-title{font-size:20px;font-weight:700;color:#fff;line-height:1.2}
+.panel-address{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Mock photo */
+.mock-photo{width:100%;height:160px;border-radius:14px;margin-top:16px;position:relative;overflow:hidden}
+.mock-photo-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:12px;
+background:linear-gradient(transparent 40%,rgba(0,0,0,.6))}
+.mock-photo-text{font-size:10px;color:rgba(255,255,255,.7);font-weight:500}
+.photo-theater{background:linear-gradient(135deg,#0a0a1a,#141428,#0a0a1a);
+box-shadow:inset 0 0 60px rgba(59,130,246,.08),inset 0 -30px 60px rgba(139,92,246,.06)}
+.photo-theater::before{content:'';position:absolute;top:20%;left:15%;right:15%;height:35%;border-radius:4px;
+background:linear-gradient(180deg,rgba(59,130,246,.06),rgba(139,92,246,.04));border:1px solid rgba(255,255,255,.03)}
+.photo-shades{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+box-shadow:inset 0 0 40px rgba(245,158,11,.05)}
+.photo-shades::before{content:'';position:absolute;top:10%;left:10%;right:10%;bottom:40%;
+background:repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0px,rgba(255,255,255,.02) 2px,transparent 2px,transparent 12px);
+border:1px solid rgba(255,255,255,.04);border-radius:2px}
+.photo-audio{background:linear-gradient(135deg,#0d1117,#161b22,#0d1117);
+box-shadow:inset 0 0 40px rgba(16,185,129,.05)}
+.photo-audio::before{content:'';position:absolute;top:30%;left:5%;right:5%;height:40%;
+background:repeating-linear-gradient(90deg,transparent,rgba(16,185,129,.04) 2px,transparent 4px);
+mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Cpath d='M0 20 Q25 5 50 20 T100 20 T150 20 T200 20' fill='none' stroke='white' stroke-width='20'/%3E%3C/svg%3E");
+-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Cpath d='M0 20 Q25 5 50 20 T100 20 T150 20 T200 20' fill='none' stroke='white' stroke-width='20'/%3E%3C/svg%3E")}
+.photo-prewire{background:linear-gradient(135deg,#1a1510,#1e1b16,#151210);
+box-shadow:inset 0 0 40px rgba(245,158,11,.04)}
+.photo-prewire::before{content:'';position:absolute;inset:15%;
+background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(245,158,11,.03) 8px,rgba(245,158,11,.03) 9px),
+repeating-linear-gradient(-45deg,transparent,transparent 8px,rgba(59,130,246,.03) 8px,rgba(59,130,246,.03) 9px)}
+.photo-lighting{background:linear-gradient(135deg,#0f0f1a,#191926,#0f0f1a);
+box-shadow:inset 0 0 80px rgba(245,158,11,.06),inset 0 -20px 60px rgba(245,158,11,.04)}
+.photo-lighting::before{content:'';position:absolute;top:15%;left:30%;width:40%;height:20%;border-radius:50%;
+background:radial-gradient(ellipse,rgba(245,158,11,.12),transparent)}
+
+/* Panel sections */
+.panel-section{margin-top:20px}
+.panel-section-title{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.panel-owner-name{font-size:14px;font-weight:600;color:#fff}
+.panel-contact{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:6px}
+.panel-scope-item{font-size:11px;color:var(--text);padding:3px 0;display:flex;align-items:flex-start;gap:6px}
+.panel-scope-item::before{content:'•';color:var(--cyan);font-weight:700}
+
+/* Financials */
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fin-item{background:rgba(255,255,255,.03);border-radius:10px;padding:8px 10px}
+.fin-item-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.fin-item-val{font-size:14px;font-weight:600;color:#fff;margin-top:2px}
+.fin-item-val.green{color:var(--green)}.fin-item-val.cyan{color:var(--cyan)}.fin-item-val.warn{color:var(--warn)}
+.fin-full{grid-column:1/3}
+.fin-profit-ring{display:flex;align-items:center;gap:16px;background:rgba(0,255,136,.04);
+border-radius:14px;padding:12px;margin-top:8px;border:1px solid rgba(0,255,136,.1)}
+
+/* Phase progress */
+.phase-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px}
+.phase-icon{width:20px;text-align:center;font-size:14px}
+.phase-label{flex:1;color:var(--text)}
+.phase-label.current{color:#fff;font-weight:600}
+.phase-label.future{color:var(--muted)}
+
+/* Sub info */
+.sub-card{background:rgba(255,255,255,.03);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.sub-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));
+display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.sub-name{font-size:12px;font-weight:600;color:#fff}
+.sub-role{font-size:10px;color:var(--muted)}
+.sub-stat{font-size:9px;color:var(--green);margin-top:1px}
+
+/* Timeline */
+.timeline-row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;border-bottom:1px solid rgba(255,255,255,.03)}
+.timeline-row:last-child{border-bottom:none}
+.timeline-label{color:var(--muted)}
+.timeline-val{color:#fff;font-weight:500}
+.timeline-val.urgent{color:var(--warn)}
+
+/* AI activity in panel */
+.ai-act-item{font-size:10px;color:var(--muted);padding:3px 0;display:flex;align-items:flex-start;gap:6px}
+.ai-act-item::before{content:'•';color:var(--cyan)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1199px){
+html,body{overflow:auto}
+.main-scroll{height:auto;overflow:visible}
+.top-row{grid-template-columns:1fr 1fr 1fr;padding:10px}
+.map-row{grid-template-columns:1fr;padding:10px}
+.map-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.map-widget{min-height:350px}
+.detail-panel{width:100%;max-width:100%;top:auto;bottom:0;left:0;right:0;height:85vh;border-left:none;
+border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0;
+transform:translateY(100%)}
+.detail-panel.open{transform:translateY(0)}
 }
-.ticker-label{
-background:linear-gradient(135deg,var(--green),var(--cyan));
-color:#000;font-size:9px;font-weight:700;
-padding:4px 12px;letter-spacing:1px;
-z-index:2;flex-shrink:0;
-}
-.ticker-track{
-flex:1;overflow:hidden;position:relative;
-}
-.ticker-content{
-display:flex;white-space:nowrap;
-animation:tickerScroll 60s linear infinite;
-font-size:11px;color:var(--text);
-}
-.ticker-content span{
-padding:0 24px;
-}
-@keyframes tickerScroll{
-0%{transform:translateX(0)}
-100%{transform:translateX(-50%)}
+@media(max-width:767px){
+.top-row{grid-template-columns:1fr;gap:8px;padding:8px}
+.map-row{padding:8px}
+.map-sidebar{grid-template-columns:1fr}
+.map-widget{min-height:280px}
+.header{padding:8px 12px}
+.logo{font-size:12px}
+.user-badge{display:none}
+.detail-panel{height:90vh}
 }
 
-/* PIPELINE RINGS */
-.pipeline-container{display:flex;align-items:center;justify-content:center;flex:1}
-.pipeline-svg{width:100%;max-width:150px}
-.pipeline-legend{
-display:flex;flex-direction:column;gap:6px;
-margin-top:6px;
-}
-.pipeline-legend-item{
-display:flex;align-items:center;gap:6px;font-size:10px;
-}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.legend-label{color:var(--muted);flex:1}
-.legend-val{font-weight:600;color:#fff}
-
-/* AI FEED WIDGET */
-.ai-feed-widget{
-flex:1;overflow:hidden;display:flex;flex-direction:column;
-}
-.ai-feed-list{
-flex:1;overflow:hidden;
-font-size:10px;line-height:1.8;
-}
-.ai-feed-line{
-padding:1px 0;
-opacity:0;
-animation:fadeIn 0.4s ease forwards;
-}
+/* AI FEED WIDGET (inside sidebar) */
+.ai-feed-list{flex:1;overflow:hidden;font-size:10px;line-height:1.8}
+.ai-feed-line{padding:1px 0;opacity:0;animation:fadeIn .4s ease forwards}
 @keyframes fadeIn{to{opacity:1}}
 .ai-feed-line .ts{color:var(--muted);font-variant-numeric:tabular-nums}
 .ai-feed-line .ev{color:var(--cyan);font-weight:600}
-.ai-feed-line .ok{color:var(--green)}
-.ai-feed-line .wr{color:var(--warn)}
-
-/* RESPONSIVE */
-@media(max-width:1200px){
-.grid{
-grid-template-columns:1fr 1fr;
-grid-template-rows:auto;
-height:auto;overflow-y:auto;
-}
-.w-revenue{grid-column:1;grid-row:auto}
-.w-pipeline{grid-column:2;grid-row:auto}
-.w-profit{grid-column:1;grid-row:auto}
-.w-marketing{grid-column:2;grid-row:auto}
-.w-sales{grid-column:1;grid-row:auto}
-.w-projects{grid-column:2;grid-row:auto}
-.w-social{grid-column:1;grid-row:auto}
-.w-satisfaction{grid-column:2;grid-row:auto}
-.w-cashflow{grid-column:1;grid-row:auto}
-.w-inventory{grid-column:2;grid-row:auto}
-.w-ai-feed{grid-column:1/3;grid-row:auto}
-html,body{overflow:auto}
-}
-@media(max-width:700px){
-.grid{grid-template-columns:1fr;gap:8px;padding:8px}
-.w-marketing,.w-ai-feed{grid-column:1}
-.header{padding:8px 12px}
-.logo{font-size:12px}
-}
-
-/* ANIMATE RINGS ON LOAD */
-.ring-progress{
-transition:stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1);
-}
+.ai-feed-line .ok{color:var(--green)}.ai-feed-line .wr{color:var(--warn)}
 </style>
 </head>
 <body>
@@ -364,10 +325,7 @@ transition:stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1);
 <header class="header">
 <div class="header-left">
 <div class="logo">SYNERGY SMART HOME</div>
-<div class="ai-status">
-<span class="ai-dot"></span>
-AI Running Your Business
-</div>
+<div class="ai-status"><span class="ai-dot"></span>AI Running Your Business</div>
 </div>
 <div class="header-right">
 <span class="user-badge">Stephen Schnugg · CEO</span>
@@ -379,25 +337,27 @@ AI Running Your Business
 <svg width="0" height="0" style="position:absolute">
 <defs>
 <linearGradient id="gRevenue" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#10b981"/>
-<stop offset="100%" stop-color="#06b6d4"/>
+<stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#06b6d4"/>
 </linearGradient>
 <linearGradient id="gProfit" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#00ff88"/>
-<stop offset="100%" stop-color="#06b6d4"/>
+<stop offset="0%" stop-color="#00ff88"/><stop offset="100%" stop-color="#06b6d4"/>
 </linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/>
+<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 </svg>
 
-<!-- GRID -->
-<div class="grid">
+<!-- MAIN SCROLLABLE AREA -->
+<div class="main-scroll">
 
+<!-- TOP ROW: Revenue, Pipeline, Profit, Marketing -->
+<div class="top-row">
 <!-- 1. REVENUE RING -->
-<div class="widget w-revenue">
+<div class="widget">
 <div class="widget-title">Monthly Revenue</div>
 <div class="ring-container">
 <svg class="ring-svg" viewBox="0 0 120 120">
-<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10"/>
 <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gRevenue)" stroke-width="10"
 stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round"
 transform="rotate(-90 60 60)" class="ring-progress" data-target="47.12"/>
@@ -415,48 +375,33 @@ transform="rotate(-90 60 60)" class="ring-progress" data-target="47.12"/>
 </div>
 
 <!-- 2. PIPELINE RINGS -->
-<div class="widget w-pipeline">
+<div class="widget">
 <div class="widget-title">Pipeline</div>
 <div class="pipeline-container">
 <svg class="pipeline-svg" viewBox="0 0 120 120">
-<!-- Outer - Leads (blue) -->
-<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(59,130,246,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(59,130,246,.15)" stroke-width="8"/>
 <circle cx="60" cy="60" r="52" fill="none" stroke="var(--blue)" stroke-width="8"
 stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round"
 transform="rotate(-90 60 60)" class="ring-progress" data-target="98.02"/>
-<!-- Middle - Proposals (purple) -->
-<circle cx="60" cy="60" r="40" fill="none" stroke="rgba(139,92,246,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="40" fill="none" stroke="rgba(139,92,246,.15)" stroke-width="8"/>
 <circle cx="60" cy="60" r="40" fill="none" stroke="var(--purple)" stroke-width="8"
 stroke-dasharray="251.33" stroke-dashoffset="251.33" stroke-linecap="round"
 transform="rotate(-90 60 60)" class="ring-progress" data-target="100.53"/>
-<!-- Inner - Closed (green) -->
-<circle cx="60" cy="60" r="28" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="28" fill="none" stroke="rgba(16,185,129,.15)" stroke-width="8"/>
 <circle cx="60" cy="60" r="28" fill="none" stroke="var(--green)" stroke-width="8"
 stroke-dasharray="175.93" stroke-dashoffset="175.93" stroke-linecap="round"
 transform="rotate(-90 60 60)" class="ring-progress" data-target="58.64"/>
 </svg>
 </div>
 <div class="pipeline-legend">
-<div class="pipeline-legend-item">
-<span class="legend-dot" style="background:var(--blue)"></span>
-<span class="legend-label">Leads</span>
-<span class="legend-val">14<span style="color:var(--muted);font-weight:400">/20</span></span>
-</div>
-<div class="pipeline-legend-item">
-<span class="legend-dot" style="background:var(--purple)"></span>
-<span class="legend-label">Proposals</span>
-<span class="legend-val">6<span style="color:var(--muted);font-weight:400">/10</span></span>
-</div>
-<div class="pipeline-legend-item">
-<span class="legend-dot" style="background:var(--green)"></span>
-<span class="legend-label">Closed</span>
-<span class="legend-val">4<span style="color:var(--muted);font-weight:400">/6</span></span>
-</div>
+<div class="pipeline-legend-item"><span class="legend-dot" style="background:var(--blue)"></span><span class="legend-label">Leads</span><span class="legend-val">14<span style="color:var(--muted);font-weight:400">/20</span></span></div>
+<div class="pipeline-legend-item"><span class="legend-dot" style="background:var(--purple)"></span><span class="legend-label">Proposals</span><span class="legend-val">6<span style="color:var(--muted);font-weight:400">/10</span></span></div>
+<div class="pipeline-legend-item"><span class="legend-dot" style="background:var(--green)"></span><span class="legend-label">Closed</span><span class="legend-val">4<span style="color:var(--muted);font-weight:400">/6</span></span></div>
 </div>
 </div>
 
 <!-- 3. PROFIT ACCUMULATOR -->
-<div class="widget w-profit">
+<div class="widget">
 <div class="widget-title">Net Profit · Live</div>
 <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
 <div class="profit-num" id="profit">$22,560.00</div>
@@ -470,116 +415,200 @@ transform="rotate(-90 60 60)" class="ring-progress" data-target="58.64"/>
 </div>
 
 <!-- 4. MARKETING CAMPAIGNS -->
-<div class="widget w-marketing">
+<div class="widget">
 <div class="widget-title">Marketing Campaigns</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:2px">
+<div style="flex:1;display:flex;flex-direction:column;gap:1px">
 <div class="row-item">
-<svg class="mini-ring" viewBox="0 0 36 36">
-<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="18" cy="18" r="14" fill="none" stroke="var(--blue)" stroke-width="3"
-stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
-transform="rotate(-90 18 18)" class="ring-progress" data-target="50.97"/>
-</svg>
-<div class="row-info">
-<div class="row-label">Google Ads</div>
-<div class="row-detail">$420 / $1,000 budget · 12 leads</div>
-</div>
+<svg class="mini-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--blue)" stroke-width="3" stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round" transform="rotate(-90 18 18)" class="ring-progress" data-target="50.97"/></svg>
+<div class="row-info"><div class="row-label">Google Ads</div><div class="row-detail">$420 / $1,000 · 12 leads</div></div>
 <div class="row-val" style="color:var(--blue)">42%</div>
 </div>
 <div class="row-item">
-<svg class="mini-ring" viewBox="0 0 36 36">
-<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="18" cy="18" r="14" fill="none" stroke="var(--purple)" stroke-width="3"
-stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
-transform="rotate(-90 18 18)" class="ring-progress" data-target="10.56"/>
-</svg>
-<div class="row-info">
-<div class="row-label">Email Nurture</div>
-<div class="row-detail">34 active sequences · 3 replies today</div>
-</div>
+<svg class="mini-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--purple)" stroke-width="3" stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round" transform="rotate(-90 18 18)" class="ring-progress" data-target="10.56"/></svg>
+<div class="row-info"><div class="row-label">Email Nurture</div><div class="row-detail">34 sequences · 3 replies today</div></div>
 <div class="row-val" style="color:var(--purple)">88%</div>
 </div>
 <div class="row-item">
-<svg class="mini-ring" viewBox="0 0 36 36">
-<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="18" cy="18" r="14" fill="none" stroke="var(--green)" stroke-width="3"
-stroke-dasharray="87.96" stroke-dashoffset="0" stroke-linecap="round"
-transform="rotate(-90 18 18)" class="ring-progress" data-target="0"/>
-</svg>
-<div class="row-info">
-<div class="row-label">Social Media</div>
-<div class="row-detail">3/3 posts this week · 1.2K reach</div>
-</div>
+<svg class="mini-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--green)" stroke-width="3" stroke-dasharray="87.96" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 18 18)" class="ring-progress" data-target="0"/></svg>
+<div class="row-info"><div class="row-label">Social Media</div><div class="row-detail">3/3 posts · 1.2K reach</div></div>
 <div class="row-val" style="color:var(--green)">100%</div>
 </div>
 <div class="row-item">
-<svg class="mini-ring" viewBox="0 0 36 36">
-<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="18" cy="18" r="14" fill="none" stroke="var(--cyan)" stroke-width="3"
-stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
-transform="rotate(-90 18 18)" class="ring-progress" data-target="35.18"/>
-</svg>
-<div class="row-info">
-<div class="row-label">Builder Outreach</div>
-<div class="row-detail">3/5 builders contacted this month</div>
-</div>
+<svg class="mini-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--cyan)" stroke-width="3" stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round" transform="rotate(-90 18 18)" class="ring-progress" data-target="35.18"/></svg>
+<div class="row-info"><div class="row-label">Builder Outreach</div><div class="row-detail">3/5 builders this month</div></div>
 <div class="row-val" style="color:var(--cyan)">60%</div>
 </div>
 </div>
 </div>
+</div><!-- /top-row -->
 
-<!-- 5. SALES SUPPORT -->
-<div class="widget w-sales">
+<!-- MAP ROW: Map + Sidebar -->
+<div class="map-row">
+<!-- ATLANTA HEAT MAP -->
+<div class="widget map-widget">
+<div class="widget-title">
+Atlanta Metro — Active Projects
+<div class="map-legend">
+<div class="map-legend-item"><div class="map-legend-dot" style="background:var(--green)"></div>Active</div>
+<div class="map-legend-item"><div class="map-legend-dot" style="background:var(--warn);border-radius:0;border:2px dashed var(--warn);width:8px;height:8px"></div>Quoted</div>
+<div class="map-legend-item"><div class="map-legend-dot" style="background:var(--blue)"></div>Complete</div>
+<div class="map-legend-item"><div class="map-legend-dot" style="border:2px dashed var(--blue);border-radius:50%;width:8px;height:8px;background:none"></div>New Lead</div>
+</div>
+</div>
+<div class="map-svg-wrap">
+<svg class="map-svg" viewBox="0 0 600 440" id="atlMap">
+<!-- Background grid -->
+<defs>
+<pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+<path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,.02)" stroke-width=".5"/>
+</pattern>
+<radialGradient id="heatGlow" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(16,185,129,.06)"/>
+<stop offset="100%" stop-color="transparent"/>
+</radialGradient>
+</defs>
+<rect width="600" height="440" fill="url(#grid)"/>
+
+<!-- Heat glow under Buckhead (most projects) -->
+<ellipse cx="280" cy="260" rx="120" ry="80" fill="url(#heatGlow)"/>
+
+<!-- Connector lines (transit-map style) -->
+<line x1="300" y1="70" x2="300" y2="150" class="map-connector"/>
+<line x1="300" y1="150" x2="280" y2="220" class="map-connector"/>
+<line x1="280" y1="220" x2="280" y2="310" class="map-connector"/>
+<line x1="300" y1="150" x2="440" y2="230" class="map-connector"/>
+<line x1="280" y1="260" x2="470" y2="300" class="map-connector"/>
+
+<!-- NEIGHBORHOOD ZONES -->
+<!-- Alpharetta -->
+<rect x="240" y="30" width="120" height="60" class="neighborhood-zone"/>
+<text x="300" y="55" text-anchor="middle" class="neighborhood-label">Alpharetta</text>
+
+<!-- Sandy Springs -->
+<rect x="220" y="120" width="160" height="70" class="neighborhood-zone"/>
+<text x="300" y="145" text-anchor="middle" class="neighborhood-label">Sandy Springs</text>
+
+<!-- Buckhead -->
+<rect x="190" y="210" width="180" height="100" class="neighborhood-zone"/>
+<text x="280" y="235" text-anchor="middle" class="neighborhood-label">Buckhead</text>
+
+<!-- Midtown -->
+<rect x="210" y="330" width="140" height="60" class="neighborhood-zone"/>
+<text x="280" y="355" text-anchor="middle" class="neighborhood-label">Midtown</text>
+
+<!-- Brookhaven -->
+<rect x="400" y="190" width="140" height="65" class="neighborhood-zone"/>
+<text x="470" y="215" text-anchor="middle" class="neighborhood-label">Brookhaven</text>
+
+<!-- Decatur -->
+<rect x="410" y="280" width="130" height="60" class="neighborhood-zone"/>
+<text x="475" y="305" text-anchor="middle" class="neighborhood-label">Decatur</text>
+
+<!-- ========== PROJECT DOTS ========== -->
+<!-- Alpharetta: Motorized Shades $6,800 - active - 12px dot -->
+<g class="project-dot" data-project="6" onclick="openPanel(6)">
+<circle cx="300" cy="70" r="18" class="dot-glow"/>
+<circle cx="300" cy="70" r="6" class="dot-active" filter="url(#glow)"/>
+</g>
+
+<!-- Sandy Springs: Retrofit $5,600 - active - 12px dot -->
+<g class="project-dot" data-project="4" onclick="openPanel(4)">
+<circle cx="280" cy="160" r="18" class="dot-glow"/>
+<circle cx="280" cy="160" r="6" class="dot-active" filter="url(#glow)"/>
+</g>
+<!-- Sandy Springs: New Build $32,000 - quoted - 22px dot -->
+<g class="project-dot" data-project="5" onclick="openPanel(5)">
+<circle cx="340" cy="168" r="11" class="dot-quoted"/>
+</g>
+
+<!-- Buckhead: Theater Room $18,500 - active - 16px dot -->
+<g class="project-dot" data-project="0" onclick="openPanel(0)">
+<circle cx="260" cy="265" r="22" class="dot-glow"/>
+<circle cx="260" cy="265" r="8" class="dot-active" filter="url(#glow)"/>
+</g>
+<!-- Buckhead: Pre-Wire $14,200 - active - 16px dot -->
+<g class="project-dot" data-project="1" onclick="openPanel(1)">
+<circle cx="300" cy="280" r="22" class="dot-glow"/>
+<circle cx="300" cy="280" r="8" class="dot-active" filter="url(#glow)"/>
+</g>
+<!-- Buckhead: Shade Install $8,400 - active - 12px dot -->
+<g class="project-dot" data-project="2" onclick="openPanel(2)">
+<circle cx="340" cy="258" r="18" class="dot-glow"/>
+<circle cx="340" cy="258" r="6" class="dot-active" filter="url(#glow)"/>
+</g>
+
+<!-- Midtown: Whole-Home Audio $12,200 - active - 16px dot -->
+<g class="project-dot" data-project="3" onclick="openPanel(3)">
+<circle cx="280" cy="365" r="22" class="dot-glow"/>
+<circle cx="280" cy="365" r="8" class="dot-active" filter="url(#glow)"/>
+</g>
+
+<!-- Decatur: Lighting Control $9,400 - near-complete - 12px dot -->
+<g class="project-dot" data-project="7" onclick="openPanel(7)">
+<circle cx="475" cy="315" r="6" class="dot-completed" filter="url(#glow)"/>
+</g>
+
+<!-- Brookhaven: AV Pre-Wire $15,800 - new lead - 16px dot -->
+<g class="project-dot" data-project="8" onclick="openPanel(8)">
+<circle cx="470" cy="230" r="8" class="dot-newlead"/>
+</g>
+</svg>
+
+<!-- TOOLTIP -->
+<div class="map-tooltip" id="mapTooltip">
+<div class="tooltip-name" id="ttName"></div>
+<div class="tooltip-val" id="ttVal"></div>
+<div class="tooltip-status" id="ttStatus"></div>
+</div>
+</div>
+</div>
+
+<!-- SIDEBAR WIDGETS -->
+<div class="map-sidebar">
+<!-- Sales Support -->
+<div class="widget">
 <div class="widget-title">Sales Support</div>
 <div style="flex:1;display:flex;flex-direction:column;gap:0">
 <div class="metric"><span class="metric-label">Quotes Awaiting</span><span class="metric-val cyan">3</span></div>
 <div class="metric"><span class="metric-label">Follow-ups Today</span><span class="metric-val green">5</span></div>
-<div class="metric"><span class="metric-label">Consultations This Week</span><span class="metric-val blue">2</span></div>
+<div class="metric"><span class="metric-label">Consultations</span><span class="metric-val blue">2</span></div>
 <div class="metric"><span class="metric-label">Win Rate</span><span class="metric-val green">34% <span style="font-size:9px">↑ 28%</span></span></div>
-<div class="highlight">
-<div class="highlight-label">🔥 Hottest Lead</div>
-<div class="highlight-val">David Okafor — $32K Crestron</div>
-</div>
-<div class="highlight" style="margin-top:4px">
-<div class="highlight-label">📅 Next Consultation</div>
-<div class="highlight-val" style="color:var(--cyan)">Today 2:00 PM</div>
-</div>
+<div class="highlight"><div class="highlight-label">🔥 Hottest Lead</div><div class="highlight-val">David Okafor — $32K Crestron</div></div>
+<div class="highlight" style="margin-top:4px"><div class="highlight-label">📅 Next Consultation</div><div class="highlight-val" style="color:var(--cyan)">Today 2:00 PM</div></div>
 </div>
 </div>
 
-<!-- 6. PROJECTS / SERVICE -->
-<div class="widget w-projects">
+<!-- Active Projects -->
+<div class="widget">
 <div class="widget-title">Active Projects</div>
 <div style="flex:1;display:flex;flex-direction:column">
 <div class="proj-item">
-<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
-<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="15" cy="15" r="11" fill="none" stroke="var(--blue)" stroke-width="3"
-stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
-transform="rotate(-90 15 15)" class="ring-progress" data-target="58.75"/>
-</svg>
-<div class="proj-info"><div class="proj-name">Buckhead Pre-Wire</div></div>
-<div class="proj-pct" style="color:var(--blue)">15%</div>
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:26px;height:26px"><circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--green)" stroke-width="3" stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round" transform="rotate(-90 15 15)" class="ring-progress" data-target="11.75"/></svg>
+<div class="proj-info"><div class="proj-name">Theater Room</div></div>
+<div class="proj-pct" style="color:var(--green)">83%</div>
 </div>
 <div class="proj-item">
-<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
-<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="15" cy="15" r="11" fill="none" stroke="var(--purple)" stroke-width="3"
-stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
-transform="rotate(-90 15 15)" class="ring-progress" data-target="24.19"/>
-</svg>
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:26px;height:26px"><circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--purple)" stroke-width="3" stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round" transform="rotate(-90 15 15)" class="ring-progress" data-target="24.19"/></svg>
 <div class="proj-info"><div class="proj-name">Buckhead Shades</div></div>
 <div class="proj-pct" style="color:var(--purple)">65%</div>
 </div>
 <div class="proj-item">
-<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
-<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-<circle cx="15" cy="15" r="11" fill="none" stroke="var(--green)" stroke-width="3"
-stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
-transform="rotate(-90 15 15)" class="ring-progress" data-target="6.91"/>
-</svg>
-<div class="proj-info"><div class="proj-name">W Paces Ferry Programming</div></div>
-<div class="proj-pct" style="color:var(--green)">90%</div>
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:26px;height:26px"><circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--blue)" stroke-width="3" stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round" transform="rotate(-90 15 15)" class="ring-progress" data-target="46.34"/></svg>
+<div class="proj-info"><div class="proj-name">Midtown Audio</div></div>
+<div class="proj-pct" style="color:var(--blue)">33%</div>
+</div>
+<div class="proj-item">
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:26px;height:26px"><circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--cyan)" stroke-width="3" stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round" transform="rotate(-90 15 15)" class="ring-progress" data-target="57.37"/></svg>
+<div class="proj-info"><div class="proj-name">Buckhead Pre-Wire</div></div>
+<div class="proj-pct" style="color:var(--cyan)">17%</div>
 </div>
 <div class="sub-status-row">
 <span class="sub-pill deployed">4 Deployed</span>
@@ -589,191 +618,481 @@ transform="rotate(-90 15 15)" class="ring-progress" data-target="6.91"/>
 </div>
 </div>
 
-<!-- 7. SOCIAL -->
-<div class="widget w-social">
-<div class="widget-title">Social Pulse</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:0">
-<div class="social-row">
-<span class="social-icon">📸</span>
-<span class="social-name">Instagram</span>
-<span class="social-num">847</span>
-<span class="social-delta">+23</span>
-</div>
-<div class="social-row">
-<span class="social-icon">⭐</span>
-<span class="social-name">Google Business</span>
-<span class="social-num">4.9★</span>
-<span class="social-delta">47 reviews</span>
-</div>
-<div class="social-row">
-<span class="social-icon">👥</span>
-<span class="social-name">Facebook</span>
-<span class="social-num">312</span>
-<span class="social-delta">+8</span>
-</div>
-<div class="highlight" style="margin-top:auto">
-<div class="highlight-label">📅 Next Post</div>
-<div class="highlight-val" style="color:var(--cyan);font-size:11px">Tomorrow 11am — Theater showcase</div>
-</div>
-</div>
-</div>
-
-<!-- 8. CUSTOMER SATISFACTION -->
-<div class="widget w-satisfaction">
+<!-- Customer Satisfaction -->
+<div class="widget">
 <div class="widget-title">Customer Satisfaction</div>
 <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
 <div class="ring-container" style="margin-bottom:4px">
-<svg viewBox="0 0 100 100" style="width:90px;max-width:90px">
-<circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+<svg viewBox="0 0 100 100" style="width:80px;max-width:80px">
+<circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
 <circle cx="50" cy="50" r="40" fill="none" stroke="url(#gRevenue)" stroke-width="7"
 stroke-dasharray="251.33" stroke-dashoffset="251.33" stroke-linecap="round"
 transform="rotate(-90 50 50)" class="ring-progress" data-target="15.08"/>
 </svg>
 <div class="ring-center">
-<div style="font-size:22px;font-weight:700;color:#fff">94</div>
+<div style="font-size:20px;font-weight:700;color:#fff">94</div>
 <div style="font-size:8px;color:var(--muted)">NPS</div>
 </div>
 </div>
 <div class="stars">★★★★★ <span style="font-size:10px;color:var(--muted)">4.9 (47)</span></div>
 <div class="metric" style="margin-top:4px"><span class="metric-label">Response Rate</span><span class="metric-val green">100%</span></div>
-<div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Last review: 5★ — 2 hours ago</div>
 </div>
 </div>
 
-<!-- 9. CASH FLOW -->
-<div class="widget w-cashflow">
+<!-- Social Pulse -->
+<div class="widget">
+<div class="widget-title">Social Pulse</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0">
+<div class="social-row"><span class="social-icon">📸</span><span class="social-name">Instagram</span><span class="social-num">847</span><span class="social-delta">+23</span></div>
+<div class="social-row"><span class="social-icon">⭐</span><span class="social-name">Google Business</span><span class="social-num">4.9★</span><span class="social-delta">47 reviews</span></div>
+<div class="social-row"><span class="social-icon">👥</span><span class="social-name">Facebook</span><span class="social-num">312</span><span class="social-delta">+8</span></div>
+<div class="highlight" style="margin-top:auto"><div class="highlight-label">📅 Next Post</div><div class="highlight-val" style="color:var(--cyan);font-size:11px">Tomorrow 11am — Theater showcase</div></div>
+</div>
+</div>
+
+<!-- Cash Flow -->
+<div class="widget">
 <div class="widget-title">Cash Flow · January</div>
-<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px">
-<div class="cash-bar-row">
-<span class="cash-bar-label">Collected</span>
-<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))" data-width="62%"></div></div>
-<span class="cash-bar-val" style="color:var(--green)">$38.6K</span>
-</div>
-<div class="cash-bar-row">
-<span class="cash-bar-label">Outstanding</span>
-<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--blue)" data-width="38%"></div></div>
-<span class="cash-bar-val" style="color:var(--blue)">$23.4K</span>
-</div>
-<div class="cash-bar-row">
-<span class="cash-bar-label">Overdue</span>
-<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--crit)" data-width="7%"></div></div>
-<span class="cash-bar-val" style="color:var(--crit)">$4.2K</span>
-</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px">
+<div class="cash-bar-row"><span class="cash-bar-label">Collected</span><div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))" data-width="62%"></div></div><span class="cash-bar-val" style="color:var(--green)">$38.6K</span></div>
+<div class="cash-bar-row"><span class="cash-bar-label">Outstanding</span><div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--blue)" data-width="38%"></div></div><span class="cash-bar-val" style="color:var(--blue)">$23.4K</span></div>
+<div class="cash-bar-row"><span class="cash-bar-label">Overdue</span><div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--crit)" data-width="7%"></div></div><span class="cash-bar-val" style="color:var(--crit)">$4.2K</span></div>
 </div>
 </div>
 
-<!-- 10. INVENTORY -->
-<div class="widget w-inventory">
+<!-- Inventory -->
+<div class="widget">
 <div class="widget-title">Inventory</div>
 <div style="flex:1;display:flex;flex-direction:column">
-<div class="inv-row">
-<span class="inv-label">En Route</span>
-<span class="inv-badge blue">3</span>
-</div>
-<div class="inv-row">
-<span class="inv-label">In Stock</span>
-<span class="inv-badge green">4</span>
-</div>
-<div class="inv-row">
-<span class="inv-label">On Order</span>
-<span class="inv-badge warn">2</span>
-</div>
-<div class="next-delivery">
-📦 Next: <strong>Jan 31 — Crestron MC4-R</strong>
+<div class="inv-row"><span class="inv-label">En Route</span><span class="inv-badge blue">3</span></div>
+<div class="inv-row"><span class="inv-label">In Stock</span><span class="inv-badge green">4</span></div>
+<div class="inv-row"><span class="inv-label">On Order</span><span class="inv-badge warn">2</span></div>
+<div class="next-delivery">📦 Next: <strong>Jan 31 — Crestron MC4-R</strong></div>
 </div>
 </div>
-</div>
-
-<!-- 11. AI ACTIVITY FEED -->
-<div class="widget w-ai-feed">
-<div class="widget-title">AI Activity</div>
-<div class="ai-feed-widget">
-<div class="ai-feed-list" id="aiFeed"></div>
-</div>
-</div>
-
-</div><!-- /grid -->
+</div><!-- /map-sidebar -->
+</div><!-- /map-row -->
+</div><!-- /main-scroll -->
 
 <!-- AI TICKER STRIP -->
 <div class="ticker-strip">
 <div class="ticker-label">AI LIVE</div>
 <div class="ticker-track">
 <div class="ticker-content" id="tickerContent">
-<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 65% complete → 📊 Win rate ↑ 34% → 🔔 New lead: Lisa Patel $22.4K</span>
-<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 65% complete → 📊 Win rate ↑ 34% → 🔔 New lead: Lisa Patel $22.4K</span>
+<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 83% complete → 📊 Win rate ↑ 34% → 🔔 New lead: David Thompson $15.8K → 🎯 David Okafor consultation today $32K</span>
+<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 83% complete → 📊 Win rate ↑ 34% → 🔔 New lead: David Thompson $15.8K → 🎯 David Okafor consultation today $32K</span>
 </div>
 </div>
+</div>
+
+<!-- PANEL BACKDROP -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+
+<!-- PROJECT DETAIL PANEL -->
+<div class="detail-panel" id="detailPanel">
+<div class="panel-close">
+<span class="panel-status" id="panelStatus">ACTIVE</span>
+<button class="panel-close-btn" onclick="closePanel()">✕</button>
+</div>
+<div class="panel-body" id="panelBody"></div>
 </div>
 
 <script>
-// === CLOCK ===
+// ===== PROJECT DATA =====
+const projects = [
+{
+name: "Buckhead Theater Room",
+address: "301 W Paces Ferry Rd, Atlanta",
+neighborhood: "Buckhead",
+value: 18500,
+owner: "Jennifer Walsh",
+phone: "(404) 555-0142",
+email: "j.walsh@email.com",
+status: "active",
+phase: "Programming",
+phasePct: 83,
+photoClass: "photo-theater",
+photoText: "7.2.4 Dolby Atmos theater with ambient lighting",
+scope: ["7.2.4 Dolby Atmos Theater","Crestron Control (TSW-1070)","8x Motorized Blackout Shades","Lutron Lighting Control","Equipment: MC4-R, Sonance VP66"],
+collected: 13300,
+subCost: 6400,
+materials: 4800,
+grossProfit: 7300,
+marginPct: 39,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire Complete",done:true},{name:"Rough-In Complete",done:true},{name:"Trim-Out Complete",done:true},{name:"Programming",current:true},{name:"Final Walk",done:false}],
+sub: {name:"James Park",initials:"JP",role:"Crestron Programming",stat:"On-site today"},
+started: "Jan 6, 2026",
+estComplete: "Feb 3, 2026",
+daysRemaining: 4,
+aiActivity: ["Client updated 2h ago","Invoice ready for final walk","Review request queued"]
+},
+{
+name: "Buckhead Pre-Wire",
+address: "1847 Peachtree Battle Ave, Atlanta",
+neighborhood: "Buckhead",
+value: 14200,
+owner: "James Harrington",
+phone: "(404) 555-0287",
+email: "j.harrington@email.com",
+status: "active",
+phase: "Pre-Wire",
+phasePct: 17,
+photoClass: "photo-prewire",
+photoText: "Whole-home Crestron pre-wire, new construction",
+scope: ["Whole-Home Crestron Pre-Wire","6-Zone Distributed Audio","Structured Wiring (Cat6A/Coax)","Builder: Ashton Woods","Equipment: Crestron MC4-R, Sonance"],
+collected: 7100,
+subCost: 4200,
+materials: 3800,
+grossProfit: 6200,
+marginPct: 44,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire",current:true},{name:"Rough-In",done:false},{name:"Trim-Out",done:false},{name:"Programming",done:false},{name:"Final Walk",done:false}],
+sub: {name:"Mike Rodriguez",initials:"MR",role:"Pre-Wire & Rough-In",stat:"Scheduled Mon-Tue"},
+started: "Jan 27, 2026",
+estComplete: "Mar 14, 2026",
+daysRemaining: 43,
+aiActivity: ["Builder coordinated for access","Material order confirmed","Deposit received yesterday"]
+},
+{
+name: "Buckhead Shade Install",
+address: "3456 Habersham Rd NW, Atlanta",
+neighborhood: "Buckhead",
+value: 8400,
+owner: "Sarah Chen",
+phone: "(404) 555-0319",
+email: "s.chen@email.com",
+status: "active",
+phase: "Trim-Out",
+phasePct: 65,
+photoClass: "photo-shades",
+photoText: "8x Lutron Palladiom motorized rollers",
+scope: ["8x Lutron Palladiom Motorized Rollers","Master Bedroom Suite","Living Room (3 windows)","Dining Room (2 windows)","Lutron RadioRA3 Integration"],
+collected: 5040,
+subCost: 2400,
+materials: 2400,
+grossProfit: 3600,
+marginPct: 43,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire Complete",done:true},{name:"Measurement & Order",done:true},{name:"Trim-Out",current:true},{name:"Programming",done:false},{name:"Final Walk",done:false}],
+sub: {name:"Carlos Vega",initials:"CV",role:"Shade Installation",stat:"Finishing this week"},
+started: "Jan 10, 2026",
+estComplete: "Feb 7, 2026",
+daysRemaining: 7,
+aiActivity: ["Client notified of schedule","Fabric delivery confirmed","Follow-up sent re: color choice"]
+},
+{
+name: "Midtown Whole-Home Audio",
+address: "1200 Peachtree St NE #4B, Atlanta",
+neighborhood: "Midtown",
+value: 12200,
+owner: "Tyler Morrison",
+phone: "(404) 555-0455",
+email: "t.morrison@email.com",
+status: "active",
+phase: "Rough-In",
+phasePct: 33,
+photoClass: "photo-audio",
+photoText: "Distributed audio — 8 zones, Sonance speakers",
+scope: ["8-Zone Distributed Audio","Sonance In-Ceiling Speakers (16 units)","Crestron Control System","Apple AirPlay 2 Integration","Equipment: Sonance VP66, Crestron AMP-2100"],
+collected: 6100,
+subCost: 3600,
+materials: 3500,
+grossProfit: 5100,
+marginPct: 42,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire Complete",done:true},{name:"Rough-In",current:true},{name:"Trim-Out",done:false},{name:"Programming",done:false},{name:"Final Walk",done:false}],
+sub: {name:"Mike Rodriguez",initials:"MR",role:"Audio Installation",stat:"On-site Wed-Thu"},
+started: "Jan 13, 2026",
+estComplete: "Feb 14, 2026",
+daysRemaining: 14,
+aiActivity: ["Speaker wire run confirmed","Client updated on timeline","Crestron processor ordered"]
+},
+{
+name: "Sandy Springs Retrofit",
+address: "450 Hammond Dr, Sandy Springs",
+neighborhood: "Sandy Springs",
+value: 5600,
+owner: "Brian Foster",
+phone: "(404) 555-0188",
+email: "b.foster@email.com",
+status: "active",
+phase: "Pre-Wire",
+phasePct: 17,
+photoClass: "photo-audio",
+photoText: "Sonos retrofit — 4 zones in existing home",
+scope: ["Sonos Retrofit — 4 Zones","Living Room, Kitchen, Master, Patio","Sonos Port + Amp Integration","Existing Speaker Re-use (2 zones)","New In-Ceiling Speakers (2 zones)"],
+collected: 2800,
+subCost: 1400,
+materials: 1400,
+grossProfit: 2800,
+marginPct: 50,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire",current:true},{name:"Speaker Install",done:false},{name:"Configuration",done:false},{name:"Final Walk",done:false}],
+sub: {name:"Derek Washington",initials:"DW",role:"Retrofit Specialist",stat:"Starting next week"},
+started: "Jan 25, 2026",
+estComplete: "Feb 10, 2026",
+daysRemaining: 10,
+aiActivity: ["Site survey completed","Equipment ordered","Client follow-up sent"]
+},
+{
+name: "Sandy Springs New Build",
+address: "6200 Riverside Dr, Sandy Springs",
+neighborhood: "Sandy Springs",
+value: 32000,
+owner: "David Okafor",
+phone: "(404) 555-0622",
+email: "d.okafor@email.com",
+status: "quoted",
+phase: "Consultation",
+phasePct: 0,
+photoClass: "photo-theater",
+photoText: "Whole-home Crestron + theater — 6BR new construction",
+scope: ["Whole-Home Crestron Automation","Dedicated Home Theater","Motorized Shades (all floors)","Lutron Lighting Control","6-Zone Distributed Audio","Security Integration"],
+collected: 0,
+subCost: 9500,
+materials: 8500,
+grossProfit: 14000,
+marginPct: 44,
+phases: [{name:"Consultation",current:true},{name:"Proposal & Contract",done:false},{name:"Deposit",done:false},{name:"Pre-Wire",done:false},{name:"Rough-In",done:false},{name:"Trim-Out",done:false},{name:"Programming",done:false},{name:"Final Walk",done:false}],
+sub: {name:"TBD",initials:"?",role:"Full team required",stat:"Pending close"},
+started: "—",
+estComplete: "TBD",
+daysRemaining: null,
+aiActivity: ["Consultation scheduled today 2pm","Proposal draft ready","Competitor analysis complete"]
+},
+{
+name: "Alpharetta Motorized Shades",
+address: "1025 Windward Concourse, Alpharetta",
+neighborhood: "Alpharetta",
+value: 6800,
+owner: "Ken Nakamura",
+phone: "(770) 555-0134",
+email: "k.nakamura@email.com",
+status: "active",
+phase: "Trim-Out",
+phasePct: 65,
+photoClass: "photo-shades",
+photoText: "6x Lutron Palladiom — bedrooms + great room",
+scope: ["6x Lutron Palladiom Motorized Shades","Master Bedroom (2 windows)","Guest Bedrooms (2 windows)","Great Room (2 large windows)","Lutron Pico Remote Control"],
+collected: 4080,
+subCost: 1800,
+materials: 1900,
+grossProfit: 3100,
+marginPct: 46,
+phases: [{name:"Deposit Received",done:true},{name:"Measurement & Order",done:true},{name:"Trim-Out",current:true},{name:"Programming",done:false},{name:"Final Walk",done:false}],
+sub: {name:"Carlos Vega",initials:"CV",role:"Shade Installation",stat:"Install tomorrow"},
+started: "Jan 15, 2026",
+estComplete: "Feb 5, 2026",
+daysRemaining: 5,
+aiActivity: ["Fabric arrived warehouse","Install scheduled tomorrow","Client confirmed availability"]
+},
+{
+name: "Decatur Lighting Control",
+address: "315 Church St, Decatur",
+neighborhood: "Decatur",
+value: 9400,
+owner: "Amy Abernathy",
+phone: "(404) 555-0776",
+email: "a.abernathy@email.com",
+status: "active",
+phase: "Final Walk",
+phasePct: 95,
+photoClass: "photo-lighting",
+photoText: "Lutron RadioRA3 whole-home lighting — 22 zones",
+scope: ["Lutron RadioRA3 Whole-Home Lighting","22 Lighting Zones","Automated Scenes (Morning, Evening, Away)","Keypads in 8 Locations","Integration: Crestron + Sonos"],
+collected: 7050,
+subCost: 2800,
+materials: 2400,
+grossProfit: 4200,
+marginPct: 45,
+phases: [{name:"Deposit Received",done:true},{name:"Pre-Wire Complete",done:true},{name:"Rough-In Complete",done:true},{name:"Trim-Out Complete",done:true},{name:"Programming Complete",done:true},{name:"Final Walk",current:true}],
+sub: {name:"James Park",initials:"JP",role:"Lighting Programming",stat:"Walk scheduled Friday"},
+started: "Dec 15, 2025",
+estComplete: "Jan 31, 2026",
+daysRemaining: 1,
+aiActivity: ["Final walk scheduled Friday","Review request ready to send","Invoice #1052 prepared"]
+},
+{
+name: "Brookhaven AV Pre-Wire",
+address: "4100 Peachtree Dunwoody Rd, Brookhaven",
+neighborhood: "Brookhaven",
+value: 15800,
+owner: "David Thompson",
+phone: "(404) 555-0933",
+email: "d.thompson@email.com",
+status: "newlead",
+phase: "New Lead",
+phasePct: 0,
+photoClass: "photo-prewire",
+photoText: "AV pre-wire + home theater rough-in, new construction",
+scope: ["AV Pre-Wire — New Construction","Dedicated Home Theater Rough-In","Whole-Home Audio Pre-Wire","Structured Wiring (Cat6A)","Conduit for Future Automation"],
+collected: 0,
+subCost: 4500,
+materials: 4200,
+grossProfit: 7100,
+marginPct: 45,
+phases: [{name:"New Lead",current:true},{name:"Consultation",done:false},{name:"Proposal",done:false},{name:"Deposit",done:false},{name:"Pre-Wire",done:false},{name:"Rough-In",done:false}],
+sub: {name:"TBD",initials:"?",role:"Pre-Wire team",stat:"Awaiting consultation"},
+started: "—",
+estComplete: "TBD",
+daysRemaining: null,
+aiActivity: ["Lead received 2h ago","Auto-response sent in 38s","Consultation scheduling in progress"]
+}
+];
+
+// ===== CLOCK =====
 function updateClock(){
-const now=new Date();
-const h=String(now.getHours()).padStart(2,'0');
-const m=String(now.getMinutes()).padStart(2,'0');
-const s=String(now.getSeconds()).padStart(2,'0');
+const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
 document.getElementById('clock').textContent=h+':'+m+':'+s;
 }
-setInterval(updateClock,1000);
-updateClock();
+setInterval(updateClock,1000);updateClock();
 
-// === PROFIT COUNTER ===
-let profit=22560.00;
+// ===== PROFIT COUNTER =====
+let profit=22560;
 const perSec=728/86400;
-function tickProfit(){
-profit+=perSec;
-document.getElementById('profit').textContent='$'+profit.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+function tickProfit(){profit+=perSec;document.getElementById('profit').textContent='$'+profit.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 setInterval(tickProfit,1000);
 
-// === ANIMATE RINGS ON LOAD ===
-setTimeout(()=>{
-document.querySelectorAll('.ring-progress').forEach(el=>{
-const target=parseFloat(el.getAttribute('data-target'));
-el.style.strokeDashoffset=target;
-});
-},300);
+// ===== ANIMATE RINGS =====
+setTimeout(()=>{document.querySelectorAll('.ring-progress').forEach(el=>{el.style.strokeDashoffset=parseFloat(el.getAttribute('data-target'));});},300);
+setTimeout(()=>{document.querySelectorAll('.cash-bar-fill[data-width]').forEach(el=>{el.style.width=el.getAttribute('data-width');});},600);
 
-// === ANIMATE CASH BARS ===
-setTimeout(()=>{
-document.querySelectorAll('.cash-bar-fill[data-width]').forEach(el=>{
-el.style.width=el.getAttribute('data-width');
+// ===== MAP TOOLTIP =====
+const tooltip=document.getElementById('mapTooltip');
+const ttName=document.getElementById('ttName');
+const ttVal=document.getElementById('ttVal');
+const ttStatus=document.getElementById('ttStatus');
+document.querySelectorAll('.project-dot').forEach(dot=>{
+const idx=parseInt(dot.getAttribute('data-project'));
+const p=projects[idx];
+dot.addEventListener('mouseenter',(e)=>{
+ttName.textContent=p.name;
+ttVal.textContent='$'+p.value.toLocaleString();
+ttStatus.textContent=p.phase+(p.phasePct?' — '+p.phasePct+'%':'');
+tooltip.classList.add('show');
 });
-},600);
+dot.addEventListener('mousemove',(e)=>{
+const wrap=document.querySelector('.map-svg-wrap');
+const rect=wrap.getBoundingClientRect();
+tooltip.style.left=(e.clientX-rect.left+12)+'px';
+tooltip.style.top=(e.clientY-rect.top-10)+'px';
+});
+dot.addEventListener('mouseleave',()=>{tooltip.classList.remove('show');});
+});
 
-// === AI FEED ===
-const feedItems=[
-{ts:'09:02',ev:'LEAD',msg:'New lead: David Thompson · Brookhaven · $15.8K AV'},
-{ts:'09:04',ev:'RESPOND',msg:'Personalized intro sent → David Thompson · <span class="ok">38s ✓</span>'},
-{ts:'09:15',ev:'NURTURE',msg:'Follow-up #2 queued → Sarah Chen · Shades $8.4K'},
-{ts:'09:22',ev:'UPDATE',msg:'Client notified → Patterson Family · <span class="ok">Trim 65%</span>'},
-{ts:'09:33',ev:'DISPATCH',msg:'Mike Reynolds confirmed → Sandy Springs pre-wire'},
-{ts:'09:45',ev:'INVOICE',msg:'Invoice #1047 → Rodriguez · $12,200 · <span class="ok">Sent ✓</span>'},
-{ts:'09:52',ev:'REVIEW',msg:'Google review request sent → Johnson · <span class="ok">5★ received</span>'},
-{ts:'10:01',ev:'BUILDER',msg:'Monthly check-in → Amanda Foster / Keystone Builders'},
-{ts:'10:08',ev:'LEAD',msg:'New lead: Lisa Patel · Midtown · $22.4K Smart Retrofit'},
-{ts:'10:30',ev:'PAYMENT',msg:'$9,250 deposit received → Patterson Family · <span class="ok">QB sync ✓</span>'},
-{ts:'10:44',ev:'SOCIAL',msg:'Instagram post queued → Buckhead Theater progress · 11am'},
-{ts:'10:51',ev:'SCORE',msg:'Lead upgraded: Michael Anderson · $34.5K · <span class="wr">HOT</span>'},
-{ts:'11:05',ev:'MARGIN',msg:'Buckhead Theater → Revenue $18.5K · Net $7,300 (39.5%)'},
-{ts:'11:18',ev:'LEAD',msg:'New lead: David Okafor · $32K Whole-Home · <span class="ok">28s ✓</span>'},
-];
-const feedEl=document.getElementById('aiFeed');
-let feedIdx=0;
-function addFeed(){
-const item=feedItems[feedIdx%feedItems.length];
-const now=new Date();
-const ts=feedIdx<feedItems.length?item.ts:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-const line=document.createElement('div');
-line.className='ai-feed-line';
-line.innerHTML='<span class="ts">'+ts+'</span> <span class="ev">'+item.ev+'</span> '+item.msg;
-feedEl.appendChild(line);
-while(feedEl.children.length>12)feedEl.removeChild(feedEl.firstChild);
-feedEl.scrollTop=feedEl.scrollHeight;
-feedIdx++;
+// ===== DETAIL PANEL =====
+const backdrop=document.getElementById('panelBackdrop');
+const panel=document.getElementById('detailPanel');
+const panelBody=document.getElementById('panelBody');
+const panelStatus=document.getElementById('panelStatus');
+
+function openPanel(idx){
+const p=projects[idx];
+tooltip.classList.remove('show');
+
+// Status badge
+const statusMap={active:'ACTIVE',quoted:'QUOTED',newlead:'NEW LEAD',completed:'COMPLETED'};
+panelStatus.textContent=statusMap[p.status]||p.status.toUpperCase();
+panelStatus.className='panel-status '+p.status;
+
+const remaining=p.value-p.collected;
+const collPct=p.value>0?Math.round((p.collected/p.value)*100):0;
+
+let phasesHTML=p.phases.map(ph=>{
+if(ph.done) return `<div class="phase-item"><span class="phase-icon">✅</span><span class="phase-label">${ph.name}</span></div>`;
+if(ph.current) return `<div class="phase-item"><span class="phase-icon">▶️</span><span class="phase-label current">${ph.name} (In Progress)</span></div>`;
+return `<div class="phase-item"><span class="phase-icon">⬜</span><span class="phase-label future">${ph.name}</span></div>`;
+}).join('');
+
+let scopeHTML=p.scope.map(s=>`<div class="panel-scope-item">${s}</div>`).join('');
+let aiHTML=p.aiActivity.map(a=>`<div class="ai-act-item">${a}</div>`).join('');
+
+// Profit ring SVG
+const profitCirc=2*Math.PI*30;
+const profitOffset=profitCirc-(profitCirc*p.marginPct/100);
+
+panelBody.innerHTML=`
+<div class="panel-title">${p.name}</div>
+<div class="panel-address">${p.address}</div>
+
+<div class="mock-photo ${p.photoClass}">
+<div class="mock-photo-overlay"><div class="mock-photo-text">${p.photoText}</div></div>
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Owner</div>
+<div class="panel-owner-name">${p.owner}</div>
+<div class="panel-contact">📞 ${p.phone}</div>
+<div class="panel-contact">📧 ${p.email}</div>
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Project Scope</div>
+${scopeHTML}
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Financials</div>
+<div class="fin-grid">
+<div class="fin-item"><div class="fin-item-label">Contract</div><div class="fin-item-val">$${p.value.toLocaleString()}</div></div>
+<div class="fin-item"><div class="fin-item-label">Collected</div><div class="fin-item-val cyan">$${p.collected.toLocaleString()}</div></div>
+<div class="fin-item"><div class="fin-item-label">Remaining</div><div class="fin-item-val warn">$${remaining.toLocaleString()}</div></div>
+<div class="fin-item"><div class="fin-item-label">Sub Cost</div><div class="fin-item-val">$${p.subCost.toLocaleString()}</div></div>
+<div class="fin-item"><div class="fin-item-label">Materials</div><div class="fin-item-val">$${p.materials.toLocaleString()}</div></div>
+<div class="fin-item"><div class="fin-item-label">Gross Profit</div><div class="fin-item-val green">$${p.grossProfit.toLocaleString()}</div></div>
+</div>
+<div class="fin-profit-ring">
+<svg viewBox="0 0 70 70" style="width:56px;height:56px;flex-shrink:0">
+<circle cx="35" cy="35" r="30" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>
+<circle cx="35" cy="35" r="30" fill="none" stroke="var(--profit)" stroke-width="5"
+stroke-dasharray="${profitCirc}" stroke-dashoffset="${profitOffset}" stroke-linecap="round"
+transform="rotate(-90 35 35)"/>
+</svg>
+<div>
+<div style="font-size:20px;font-weight:700;color:var(--profit)">${p.marginPct}%</div>
+<div style="font-size:9px;color:var(--muted)">GROSS MARGIN</div>
+</div>
+</div>
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Phase Progress</div>
+${phasesHTML}
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Subcontractor</div>
+<div class="sub-card">
+<div class="sub-avatar">${p.sub.initials}</div>
+<div>
+<div class="sub-name">${p.sub.name}</div>
+<div class="sub-role">${p.sub.role}</div>
+<div class="sub-stat">${p.sub.stat}</div>
+</div>
+</div>
+</div>
+
+<div class="panel-section">
+<div class="panel-section-title">Timeline</div>
+<div class="timeline-row"><span class="timeline-label">Started</span><span class="timeline-val">${p.started}</span></div>
+<div class="timeline-row"><span class="timeline-label">Est. Complete</span><span class="timeline-val">${p.estComplete}</span></div>
+<div class="timeline-row"><span class="timeline-label">Days Remaining</span><span class="timeline-val ${p.daysRemaining!==null&&p.daysRemaining<=5?'urgent':''}">${p.daysRemaining!==null?p.daysRemaining:'—'}</span></div>
+</div>
+
+<div class="panel-section" style="margin-bottom:30px">
+<div class="panel-section-title">AI Activity</div>
+${aiHTML}
+</div>
+`;
+
+backdrop.classList.add('open');
+panel.classList.add('open');
+document.body.style.overflow='hidden';
 }
-for(let i=0;i<6;i++)setTimeout(()=>addFeed(),i*200);
-setInterval(addFeed,5000);
+
+function closePanel(){
+backdrop.classList.remove('open');
+panel.classList.remove('open');
+document.body.style.overflow='';
+}
+
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closePanel();});
 </script>
 </body>
 </html>
