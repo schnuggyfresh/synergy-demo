@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Synergy Smart Home — Apple Watch</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0a;
+--card:#1c1c1e;
+--green:#30d158;--cyan:#64d2ff;
+--blue:#0a84ff;--purple:#bf5af2;
+--red:#ff453a;--orange:#ff9f0a;--yellow:#ffd60a;
+--text:#fff;--muted:#98989d;--dim:#2c2c2e;
+}
+html,body{height:100%;background:#1a1a1e;color:var(--text);overflow:hidden;
+font-family:-apple-system,BlinkMacSystemFont,'SF Pro Rounded','SF Pro Display','Helvetica Neue',sans-serif;
+display:flex;align-items:center;justify-content:center;}
+
+/* PAGE WRAPPER */
+.page-wrap{display:flex;flex-direction:column;align-items:center;gap:20px}
+.page-title{font-size:13px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.page-subtitle{font-size:11px;color:#636366;margin-top:-14px;text-align:center}
+
+/* WATCH FRAME - Apple Watch Ultra 49mm */
+.watch-frame{
+width:232px;height:280px;
+background:linear-gradient(145deg,#3a3a3c,#2c2c2e,#1c1c1e);
+border-radius:58px;
+position:relative;
+box-shadow:
+0 0 0 2px #48484a,
+0 0 0 4px #1c1c1e,
+0 2px 20px rgba(0,0,0,.8),
+inset 0 1px 0 rgba(255,255,255,.08);
+overflow:hidden;
+}
+/* Titanium bezel shine */
+.watch-frame::before{
+content:'';position:absolute;inset:0;border-radius:58px;
+background:linear-gradient(160deg,rgba(255,255,255,.06) 0%,transparent 40%,transparent 60%,rgba(255,255,255,.03) 100%);
+z-index:3;pointer-events:none;
+}
+/* Side button */
+.watch-frame::after{
+content:'';position:absolute;right:-6px;top:95px;width:6px;height:32px;
+background:linear-gradient(90deg,#3a3a3c,#48484a);border-radius:0 3px 3px 0;
+box-shadow:1px 0 4px rgba(0,0,0,.5);
+}
+/* Digital Crown */
+.watch-crown{position:absolute;right:-8px;top:55px;width:8px;height:22px;
+background:linear-gradient(90deg,#48484a,#5a5a5e,#48484a);border-radius:0 4px 4px 0;
+box-shadow:2px 0 6px rgba(0,0,0,.5);z-index:2}
+.watch-crown::before{content:'';position:absolute;top:3px;left:2px;right:0;bottom:3px;
+background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,.2) 1px,rgba(0,0,0,.2) 2px);
+border-radius:0 2px 2px 0}
+/* Action button (Ultra) */
+.watch-action-btn{position:absolute;left:-6px;top:80px;width:6px;height:18px;
+background:linear-gradient(90deg,#48484a,#3a3a3c);border-radius:3px 0 0 3px;
+box-shadow:-1px 0 4px rgba(0,0,0,.5);z-index:2}
+.watch-action-btn::before{content:'';position:absolute;inset:2px;border-radius:2px 0 0 2px;
+background:linear-gradient(90deg,#ff9f0a,#ff6b00);opacity:.6}
+
+/* Screen area */
+.watch-screen{
+position:absolute;
+top:20px;left:17px;right:17px;bottom:20px;
+border-radius:40px;
+background:var(--bg);
+overflow:hidden;
+z-index:1;
+}
+
+/* Horizontal scroll container */
+.screen-scroll{
+display:flex;
+width:100%;height:100%;
+overflow-x:auto;
+overflow-y:hidden;
+scroll-snap-type:x mandatory;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+}
+.screen-scroll::-webkit-scrollbar{display:none}
+
+/* Individual screen */
+.watch-page{
+flex:0 0 100%;width:100%;height:100%;
+scroll-snap-align:start;
+padding:14px 12px;
+display:flex;flex-direction:column;
+position:relative;
+overflow:hidden;
+}
+
+/* Page indicator dots */
+.page-dots{
+position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+display:flex;gap:5px;z-index:5;
+}
+.page-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);
+transition:all .3s}
+.page-dot.active{background:#fff;box-shadow:0 0 4px rgba(255,255,255,.5)}
+
+/* ===== SCREEN 1: GLANCE ===== */
+.glance-logo{font-size:11px;font-weight:800;letter-spacing:2px;text-align:center;
+color:var(--green);margin-top:2px;margin-bottom:4px}
+.glance-ring-wrap{position:relative;display:flex;align-items:center;justify-content:center;flex:1}
+.glance-ring{width:140px;height:140px}
+.glance-center{position:absolute;text-align:center}
+.glance-amount{font-size:30px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1}
+.glance-label{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500}
+.glance-complications{display:flex;justify-content:space-around;margin-top:auto;padding:0 4px}
+.complication{text-align:center}
+.complication-val{font-size:13px;font-weight:700;color:#fff}
+.complication-label{font-size:8px;color:var(--muted);margin-top:1px;font-weight:500}
+
+/* ===== SCREEN 2: ALERTS ===== */
+.alerts-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;
+text-transform:uppercase;margin-bottom:6px}
+.alert-item{padding:7px 8px;border-radius:12px;margin-bottom:5px;cursor:pointer;
+transition:transform .1s,background .2s;position:relative;overflow:hidden}
+.alert-item:active{transform:scale(.97)}
+.alert-item.fire{background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.2)}
+.alert-item.warn{background:rgba(255,159,10,.12);border:1px solid rgba(255,159,10,.2)}
+.alert-item.ok{background:rgba(48,209,88,.12);border:1px solid rgba(48,209,88,.2)}
+.alert-item.star{background:rgba(255,214,10,.12);border:1px solid rgba(255,214,10,.2)}
+.alert-emoji{font-size:12px}
+.alert-text{font-size:10px;font-weight:600;color:#fff;margin-top:1px;line-height:1.3}
+.alert-detail{font-size:9px;color:var(--muted);margin-top:1px}
+
+/* ===== SCREEN 3: SCHEDULE ===== */
+.schedule-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;
+text-transform:uppercase;margin-bottom:8px}
+.sched-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;position:relative}
+.sched-dot{width:10px;height:10px;border-radius:50%;margin-top:2px;flex-shrink:0;
+box-shadow:0 0 6px currentColor}
+.sched-dot.done{background:var(--green);color:var(--green)}
+.sched-dot.upcoming{background:var(--blue);color:var(--blue)}
+.sched-line{position:absolute;left:4px;top:14px;bottom:-5px;width:2px;background:rgba(255,255,255,.08)}
+.sched-item:last-child .sched-line{display:none}
+.sched-time{font-size:11px;font-weight:700;color:var(--muted);width:36px;flex-shrink:0}
+.sched-label{font-size:11px;font-weight:600;color:#fff;line-height:1.3}
+.sched-loc{font-size:9px;color:var(--muted)}
+
+/* ===== SCREEN 4: PROFIT ===== */
+.profit-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;
+text-transform:uppercase;text-align:center;margin-bottom:4px}
+.profit-big{font-size:36px;font-weight:800;color:var(--green);text-align:center;
+text-shadow:0 0 20px rgba(48,209,88,.3);font-variant-numeric:tabular-nums;line-height:1}
+.profit-proj{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+.profit-proj strong{color:var(--cyan);font-weight:700}
+.profit-rate{font-size:11px;color:var(--muted);text-align:center;margin-top:2px}
+.sparkline-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0}
+.sparkline-wrap svg{width:100%;max-height:50px}
+
+/* ===== SCREEN 5: SUBS ===== */
+.subs-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;
+text-transform:uppercase;margin-bottom:6px}
+.sub-item{display:flex;align-items:center;gap:8px;padding:5px 0;
+border-bottom:1px solid rgba(255,255,255,.05)}
+.sub-item:last-child{border-bottom:none}
+.sub-indicator{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sub-indicator.onsite{background:var(--green);box-shadow:0 0 6px var(--green)}
+.sub-indicator.standby{background:var(--orange);box-shadow:0 0 6px var(--orange)}
+.sub-indicator.off{background:#48484a}
+.sub-text{flex:1;min-width:0}
+.sub-text-name{font-size:11px;font-weight:600;color:#fff}
+.sub-text-status{font-size:9px;color:var(--muted)}
+
+/* ===== SCREEN 6: QUICK ACTIONS ===== */
+.actions-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;
+text-transform:uppercase;margin-bottom:6px}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
+.action-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;
+background:var(--dim);border-radius:16px;padding:10px 4px;cursor:pointer;
+transition:transform .1s,background .15s;border:1px solid rgba(255,255,255,.06)}
+.action-btn:active{transform:scale(.93);background:rgba(255,255,255,.1)}
+.action-emoji{font-size:22px;margin-bottom:3px}
+.action-label{font-size:9px;font-weight:600;color:var(--muted);text-align:center;line-height:1.2}
+
+/* ===== SWIPE HINT ===== */
+.swipe-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+font-size:9px;color:rgba(255,255,255,.2);z-index:5;white-space:nowrap;
+animation:hintFade 3s ease-in-out infinite}
+@keyframes hintFade{0%,100%{opacity:.2}50%{opacity:.5}}
+
+/* Animations */
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:countUp .5s ease forwards}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="page-title">⌚ Synergy Watch</div>
+<div class="page-subtitle">Swipe to navigate · Apple Watch Ultra mockup</div>
+
+<div class="watch-frame">
+<div class="watch-crown"></div>
+<div class="watch-action-btn"></div>
+<div class="watch-screen">
+<div class="screen-scroll" id="screenScroll">
+
+<!-- SCREEN 1: GLANCE -->
+<div class="watch-page">
+<div class="glance-logo">S Y N E R G Y</div>
+<div class="glance-ring-wrap">
+<svg class="glance-ring" viewBox="0 0 140 140">
+<!-- Background ring -->
+<circle cx="70" cy="70" r="60" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+<!-- Revenue progress ring (85%) -->
+<circle cx="70" cy="70" r="60" fill="none" stroke="url(#watchGrad)" stroke-width="10"
+stroke-dasharray="376.99" stroke-dashoffset="376.99" stroke-linecap="round"
+transform="rotate(-90 70 70)" id="revenueRing"/>
+<!-- Inner subtle ring -->
+<circle cx="70" cy="70" r="48" fill="none" stroke="rgba(48,209,88,.08)" stroke-width="4"/>
+<circle cx="70" cy="70" r="48" fill="none" stroke="rgba(48,209,88,.25)" stroke-width="4"
+stroke-dasharray="301.59" stroke-dashoffset="75.4" stroke-linecap="round"
+transform="rotate(-90 70 70)"/>
+<defs>
+<linearGradient id="watchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#30d158"/>
+<stop offset="50%" stop-color="#64d2ff"/>
+<stop offset="100%" stop-color="#0a84ff"/>
+</linearGradient>
+</defs>
+</svg>
+<div class="glance-center">
+<div class="glance-amount" id="watchRevenue">$47.2K</div>
+<div class="glance-label">Revenue MTD</div>
+</div>
+</div>
+<div class="glance-complications">
+<div class="complication">
+<div class="complication-val" style="color:var(--green)">6</div>
+<div class="complication-label">Active</div>
+</div>
+<div class="complication">
+<div class="complication-val" style="color:var(--blue)">3</div>
+<div class="complication-label">New</div>
+</div>
+<div class="complication">
+<div class="complication-val" style="color:var(--yellow)">4.9★</div>
+<div class="complication-label">Rating</div>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 2: ALERTS -->
+<div class="watch-page">
+<div class="alerts-title">Notifications</div>
+<div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0">
+<div class="alert-item fire" onclick="this.querySelector('.alert-detail').style.display=this.querySelector('.alert-detail').style.display==='block'?'none':'block'">
+<div><span class="alert-emoji">🔥</span> <span class="alert-text">NEW LEAD</span></div>
+<div class="alert-text" style="font-size:10px;margin-top:1px">David Okafor — $32K</div>
+<div class="alert-detail" style="display:none">Whole-home Crestron + Theater. Sandy Springs new build. Consultation today 2pm.</div>
+</div>
+<div class="alert-item warn" onclick="this.querySelector('.alert-detail').style.display=this.querySelector('.alert-detail').style.display==='block'?'none':'block'">
+<div><span class="alert-emoji">⚠️</span> <span class="alert-text">Invoice Overdue</span></div>
+<div class="alert-text" style="font-size:10px;margin-top:1px">Nakamura — $3,400</div>
+<div class="alert-detail" style="display:none">Alpharetta shades. 7 days past due. Auto-reminder sent.</div>
+</div>
+<div class="alert-item ok" onclick="this.querySelector('.alert-detail').style.display=this.querySelector('.alert-detail').style.display==='block'?'none':'block'">
+<div><span class="alert-emoji">✅</span> <span class="alert-text">Payment Received</span></div>
+<div class="alert-text" style="font-size:10px;margin-top:1px">Harrington — $7,100</div>
+<div class="alert-detail" style="display:none">Buckhead pre-wire deposit. Project green-lit.</div>
+</div>
+<div class="alert-item star" onclick="this.querySelector('.alert-detail').style.display=this.querySelector('.alert-detail').style.display==='block'?'none':'block'">
+<div><span class="alert-emoji">⭐</span> <span class="alert-text">New 5-Star Review</span></div>
+<div class="alert-text" style="font-size:10px;margin-top:1px">Harrington — Google</div>
+<div class="alert-detail" style="display:none">"Incredible work by the Synergy team. James was professional and thorough."</div>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 3: SCHEDULE -->
+<div class="watch-page">
+<div class="schedule-title">Today</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0;padding-left:2px">
+<div class="sched-item">
+<div class="sched-dot done"></div>
+<div class="sched-time">8:30</div>
+<div>
+<div class="sched-label">Pre-Wire</div>
+<div class="sched-loc">Buckhead</div>
+</div>
+<div class="sched-line"></div>
+</div>
+<div class="sched-item">
+<div class="sched-dot done"></div>
+<div class="sched-time">11:00</div>
+<div>
+<div class="sched-label">Shades Install</div>
+<div class="sched-loc">Buckhead</div>
+</div>
+<div class="sched-line"></div>
+</div>
+<div class="sched-item">
+<div class="sched-dot upcoming"></div>
+<div class="sched-time">2:00</div>
+<div>
+<div class="sched-label">Consultation</div>
+<div class="sched-loc">Sandy Springs</div>
+</div>
+<div class="sched-line"></div>
+</div>
+<div class="sched-item">
+<div class="sched-dot upcoming"></div>
+<div class="sched-time">4:30</div>
+<div>
+<div class="sched-label">Final Walk</div>
+<div class="sched-loc">Buckhead</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 4: PROFIT TICKER -->
+<div class="watch-page">
+<div class="profit-title">Net Profit</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+<div class="profit-big" id="watchProfit">$22,560</div>
+<div class="profit-proj"><strong>$265K</strong> projected</div>
+<div class="profit-rate">$728/day · $30.33/hr</div>
+<div class="sparkline-wrap">
+<svg viewBox="0 0 160 50" preserveAspectRatio="none">
+<defs>
+<linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="rgba(48,209,88,.3)"/>
+<stop offset="100%" stop-color="rgba(48,209,88,0)"/>
+</linearGradient>
+</defs>
+<!-- Area fill -->
+<path d="M0 45 L10 42 25 38 40 36 55 33 70 30 85 28 100 25 115 22 130 18 145 15 160 10 160 50 0 50Z"
+fill="url(#sparkGrad)"/>
+<!-- Line -->
+<polyline points="0,45 10,42 25,38 40,36 55,33 70,30 85,28 100,25 115,22 130,18 145,15 160,10"
+fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Current dot -->
+<circle cx="160" cy="10" r="3" fill="var(--green)">
+<animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+</circle>
+</svg>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 5: SUB STATUS -->
+<div class="watch-page">
+<div class="subs-title">Subs</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0">
+<div class="sub-item">
+<div class="sub-indicator onsite"></div>
+<div class="sub-text">
+<div class="sub-text-name">Mike R.</div>
+<div class="sub-text-status">ON-SITE · Buckhead</div>
+</div>
+</div>
+<div class="sub-item">
+<div class="sub-indicator onsite"></div>
+<div class="sub-text">
+<div class="sub-text-name">Carlos V.</div>
+<div class="sub-text-status">ON-SITE · Buckhead</div>
+</div>
+</div>
+<div class="sub-item">
+<div class="sub-indicator onsite"></div>
+<div class="sub-text">
+<div class="sub-text-name">James P.</div>
+<div class="sub-text-status">ON-SITE · W Paces</div>
+</div>
+</div>
+<div class="sub-item">
+<div class="sub-indicator standby"></div>
+<div class="sub-text">
+<div class="sub-text-name">Derek W.</div>
+<div class="sub-text-status">STANDBY</div>
+</div>
+</div>
+<div class="sub-item">
+<div class="sub-indicator off"></div>
+<div class="sub-text">
+<div class="sub-text-name">Tony R.</div>
+<div class="sub-text-status">OFF</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SCREEN 6: QUICK ACTIONS -->
+<div class="watch-page">
+<div class="actions-title">Quick Actions</div>
+<div class="action-grid">
+<div class="action-btn" onclick="this.style.background='rgba(48,209,88,.15)';setTimeout(()=>this.style.background='',300)">
+<div class="action-emoji">📝</div>
+<div class="action-label">Voice Note</div>
+</div>
+<div class="action-btn" onclick="this.style.background='rgba(10,132,255,.15)';setTimeout(()=>this.style.background='',300)">
+<div class="action-emoji">📸</div>
+<div class="action-label">Site Photo</div>
+</div>
+<div class="action-btn" onclick="this.style.background='rgba(100,210,255,.15)';setTimeout(()=>this.style.background='',300)">
+<div class="action-emoji">📞</div>
+<div class="action-label">Call Lead</div>
+</div>
+<div class="action-btn" onclick="this.style.background='rgba(48,209,88,.15)';setTimeout(()=>this.style.background='',300)">
+<div class="action-emoji">✅</div>
+<div class="action-label">Approve Proposal</div>
+</div>
+</div>
+</div>
+
+</div><!-- /screen-scroll -->
+
+<!-- PAGE INDICATOR DOTS -->
+<div class="page-dots" id="pageDots">
+<div class="page-dot active"></div>
+<div class="page-dot"></div>
+<div class="page-dot"></div>
+<div class="page-dot"></div>
+<div class="page-dot"></div>
+<div class="page-dot"></div>
+</div>
+
+<div class="swipe-hint">← swipe →</div>
+</div><!-- /watch-screen -->
+</div><!-- /watch-frame -->
+</div><!-- /page-wrap -->
+
+<script>
+// ===== PAGE DOT TRACKING =====
+const scroll = document.getElementById('screenScroll');
+const dots = document.querySelectorAll('.page-dot');
+const totalPages = 6;
+
+scroll.addEventListener('scroll', () => {
+const scrollLeft = scroll.scrollLeft;
+const pageWidth = scroll.offsetWidth;
+const currentPage = Math.round(scrollLeft / pageWidth);
+dots.forEach((dot, i) => {
+dot.classList.toggle('active', i === currentPage);
+});
+});
+
+// ===== REVENUE RING ANIMATION =====
+setTimeout(() => {
+const ring = document.getElementById('revenueRing');
+const circumference = 2 * Math.PI * 60;
+const progress = 0.858; // 85.8% of target
+ring.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
+ring.style.strokeDashoffset = circumference * (1 - progress);
+}, 500);
+
+// ===== PROFIT COUNTER =====
+let watchProfit = 22560;
+const watchPerSec = 728 / 86400;
+function tickWatchProfit() {
+watchProfit += watchPerSec;
+document.getElementById('watchProfit').textContent =
+'$' + Math.floor(watchProfit).toLocaleString();
+}
+setInterval(tickWatchProfit, 1000);
+
+// ===== TOUCH/SWIPE SUPPORT =====
+let touchStartX = 0;
+let touchStartY = 0;
+scroll.addEventListener('touchstart', (e) => {
+touchStartX = e.touches[0].clientX;
+touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+// ===== KEYBOARD NAVIGATION =====
+document.addEventListener('keydown', (e) => {
+const pageWidth = scroll.offsetWidth;
+if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+scroll.scrollBy({ left: pageWidth, behavior: 'smooth' });
+} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+scroll.scrollBy({ left: -pageWidth, behavior: 'smooth' });
+}
+});
+
+// ===== HIDE SWIPE HINT AFTER FIRST SCROLL =====
+let hintHidden = false;
+scroll.addEventListener('scroll', () => {
+if (!hintHidden && scroll.scrollLeft > 20) {
+document.querySelector('.swipe-hint').style.opacity = '0';
+hintHidden = true;
+}
+}, { passive: true });
+</script>
+</body>
+</html>
