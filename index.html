@@ -2,509 +2,708 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYNERGY SMART HOME // OPERATIONS CENTER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Synergy Smart Home — Command Center</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#0a0c14;--panel:#0d1117;--border:rgba(0,255,200,0.15);
---cyan:#00ffc8;--blue:#00a8ff;--green:#00ff88;--amber:#ffaa00;--red:#ff4444;
---text:#c0d0e0;--muted:#4a5568;--dim:#1a1e2a;
+--bg:#0a0e17;
+--widget:rgba(17,24,39,0.8);
+--border:rgba(255,255,255,0.06);
+--green:#10b981;--cyan:#06b6d4;
+--blue:#3b82f6;--purple:#8b5cf6;
+--profit:#00ff88;--warn:#f59e0b;--crit:#ef4444;
+--text:#e2e8f0;--muted:#64748b;--dim:#1e293b;
 }
-@font-face{font-family:'Mono';src:local('SF Mono'),local('Courier New'),local('monospace')}
-body{background:var(--bg);color:var(--text);font-family:'SF Mono','Courier New','Consolas',monospace;overflow-x:hidden;min-height:100vh}
+html,body{height:100%;overflow:hidden}
+body{
+background:var(--bg);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro','Segoe UI','Helvetica Neue',sans-serif;
+}
 ::selection{background:var(--cyan);color:var(--bg)}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--muted);border-radius:2px}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
 
-/* TOP BAR */
-.topbar{
+/* HEADER */
+.header{
 display:flex;align-items:center;justify-content:space-between;
-padding:8px 16px;border-bottom:1px solid var(--border);
-background:linear-gradient(180deg,rgba(13,17,23,0.98),rgba(10,12,20,0.95));
-position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);
+padding:10px 20px;
+background:rgba(10,14,23,0.9);
+backdrop-filter:blur(20px);
+border-bottom:1px solid var(--border);
+height:48px;
 }
-.topbar-brand{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--cyan);
-text-shadow:0 0 20px rgba(0,255,200,0.4),0 0 40px rgba(0,255,200,0.1)}
-.topbar-right{display:flex;align-items:center;gap:20px;font-size:11px}
-.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;
-animation:dotpulse 2s infinite}
-.status-dot.green{background:var(--green);box-shadow:0 0 8px var(--green)}
-.status-dot.cyan{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-@keyframes dotpulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.clock{color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:1px}
-.ai-tag{color:var(--green);font-size:10px;letter-spacing:1px}
-.uptime{color:var(--muted);font-size:10px}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo{
+font-size:14px;font-weight:700;letter-spacing:1.5px;
+background:linear-gradient(135deg,#fff,#94a3b8);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.ai-status{
+display:flex;align-items:center;gap:6px;
+font-size:11px;color:var(--green);font-weight:500;
+}
+.ai-dot{
+width:7px;height:7px;border-radius:50%;
+background:var(--green);
+box-shadow:0 0 8px var(--green),0 0 16px rgba(16,185,129,0.3);
+animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.85)}}
+.header-right{display:flex;align-items:center;gap:16px}
+.clock{font-size:13px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:0.5px}
+.user-badge{
+font-size:10px;color:var(--muted);
+background:rgba(255,255,255,0.05);
+padding:4px 10px;border-radius:20px;
+border:1px solid var(--border);
+}
 
-/* METRICS TICKER */
-.ticker{
-display:flex;gap:0;border-bottom:1px solid var(--border);
-background:rgba(13,17,23,0.6);overflow-x:auto;
-}
-.ticker-item{
-flex:1;min-width:120px;padding:10px 14px;text-align:center;
-border-right:1px solid var(--border);
-}
-.ticker-item:last-child{border-right:none}
-.ticker-val{font-size:18px;font-weight:700;color:var(--cyan);
-text-shadow:0 0 12px rgba(0,255,200,0.3);line-height:1.2}
-.ticker-val.green{color:var(--green);text-shadow:0 0 12px rgba(0,255,136,0.3)}
-.ticker-val.amber{color:var(--amber);text-shadow:0 0 12px rgba(255,170,0,0.3)}
-.ticker-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
-
-/* MAIN GRID */
-.main-grid{
+/* GRID */
+.grid{
 display:grid;
-grid-template-columns:280px 1fr 300px;
-grid-template-rows:auto auto auto;
-gap:0;
-height:calc(100vh - 95px);
+grid-template-columns:1fr 1fr 1fr 1fr;
+grid-template-rows:auto auto auto auto;
+gap:10px;
+padding:10px;
+height:calc(100vh - 48px - 36px);
 overflow:hidden;
 }
 
-/* PANELS */
-.panel{
+/* WIDGET BASE */
+.widget{
+background:var(--widget);
+backdrop-filter:blur(20px);
 border:1px solid var(--border);
-background:var(--panel);
+border-radius:20px;
+padding:16px;
+position:relative;
+overflow:hidden;
+display:flex;flex-direction:column;
+}
+.widget::before{
+content:'';position:absolute;top:0;left:0;right:0;height:1px;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+}
+.widget-title{
+font-size:10px;font-weight:600;letter-spacing:1.2px;
+text-transform:uppercase;color:var(--muted);
+margin-bottom:10px;
+}
+
+/* LARGE */
+.widget.lg{grid-row:span 1}
+/* Revenue */
+.w-revenue{grid-column:1;grid-row:1}
+.w-pipeline{grid-column:2;grid-row:1}
+.w-profit{grid-column:3;grid-row:1}
+.w-marketing{grid-column:4;grid-row:1/3}
+.w-sales{grid-column:1;grid-row:2}
+.w-projects{grid-column:2;grid-row:2}
+.w-social{grid-column:3;grid-row:2}
+.w-satisfaction{grid-column:1;grid-row:3}
+.w-cashflow{grid-column:2;grid-row:3}
+.w-inventory{grid-column:3;grid-row:3}
+.w-ai-feed{grid-column:4;grid-row:3}
+
+/* RING STYLES */
+.ring-container{display:flex;align-items:center;justify-content:center;flex:1;position:relative}
+.ring-svg{width:100%;max-width:160px;height:auto}
+.ring-center{
+position:absolute;text-align:center;
+top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.ring-big-num{font-size:26px;font-weight:700;color:#fff;line-height:1}
+.ring-sub-label{font-size:9px;color:var(--muted);margin-top:2px}
+.ring-stats{
+display:flex;gap:16px;justify-content:center;
+margin-top:8px;
+}
+.ring-stat{text-align:center}
+.ring-stat-val{font-size:13px;font-weight:600;color:#fff}
+.ring-stat-label{font-size:8px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase}
+
+/* MINI RING */
+.mini-ring{width:32px;height:32px;flex-shrink:0}
+.mini-ring-sm{width:26px;height:26px;flex-shrink:0}
+
+/* PROFIT */
+.profit-num{
+font-size:32px;font-weight:700;
+color:var(--profit);
+text-shadow:0 0 30px rgba(0,255,136,0.3);
+text-align:center;letter-spacing:1px;
+font-variant-numeric:tabular-nums;
+}
+.profit-meta{display:flex;gap:12px;justify-content:center;margin-top:8px}
+.profit-meta-item{text-align:center}
+.profit-meta-val{font-size:12px;font-weight:600;color:var(--cyan)}
+.profit-meta-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.profit-ticker{font-size:10px;color:var(--muted);text-align:center;margin-top:6px}
+.profit-ticker .arr{color:var(--profit)}
+
+/* ROW ITEMS */
+.row-item{
+display:flex;align-items:center;gap:10px;
+padding:6px 0;
+border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.row-item:last-child{border-bottom:none}
+.row-info{flex:1;min-width:0}
+.row-label{font-size:11px;color:var(--text);font-weight:500}
+.row-detail{font-size:9px;color:var(--muted);margin-top:1px}
+.row-val{font-size:11px;font-weight:600;text-align:right;white-space:nowrap}
+
+/* METRIC ROWS */
+.metric{
+display:flex;justify-content:space-between;align-items:center;
+padding:5px 0;
+border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.metric:last-child{border-bottom:none}
+.metric-label{font-size:11px;color:var(--text)}
+.metric-val{font-size:12px;font-weight:600}
+.metric-val.green{color:var(--green)}
+.metric-val.cyan{color:var(--cyan)}
+.metric-val.warn{color:var(--warn)}
+.metric-val.crit{color:var(--crit)}
+.metric-val.blue{color:var(--blue)}
+.metric-val.purple{color:var(--purple)}
+
+/* HIGHLIGHT CARD */
+.highlight{
+background:rgba(255,255,255,0.03);
+border-radius:12px;padding:8px 10px;
+margin-top:6px;
+}
+.highlight-label{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.highlight-val{font-size:12px;font-weight:600;color:var(--warn);margin-top:1px}
+
+/* SOCIAL PLATFORM */
+.social-row{
+display:flex;align-items:center;gap:8px;
+padding:5px 0;
+border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.social-row:last-child{border-bottom:none}
+.social-icon{font-size:14px;width:20px;text-align:center}
+.social-name{font-size:11px;color:var(--text);flex:1}
+.social-num{font-size:12px;font-weight:600;color:#fff}
+.social-delta{font-size:9px;color:var(--green);margin-left:4px}
+
+/* PROJECT BAR */
+.proj-item{
+display:flex;align-items:center;gap:8px;
+padding:6px 0;
+border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.proj-item:last-child{border-bottom:none}
+.proj-info{flex:1;min-width:0}
+.proj-name{font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-pct{font-size:9px;font-weight:600;width:32px;text-align:right}
+
+/* SUB STATUS */
+.sub-status-row{
+display:flex;gap:8px;margin-top:6px;
+}
+.sub-pill{
+font-size:9px;font-weight:600;
+padding:3px 8px;border-radius:10px;
+}
+.sub-pill.deployed{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3)}
+.sub-pill.standby{background:rgba(245,158,11,0.15);color:var(--warn);border:1px solid rgba(245,158,11,0.3)}
+.sub-pill.off{background:rgba(100,116,139,0.15);color:var(--muted);border:1px solid rgba(100,116,139,0.3)}
+
+/* SATISFACTION */
+.sat-score{
+font-size:36px;font-weight:700;
+background:linear-gradient(135deg,var(--green),var(--cyan));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+text-align:center;line-height:1;
+}
+.sat-label{font-size:10px;color:var(--muted);text-align:center;margin-top:2px}
+.stars{color:var(--warn);font-size:13px;text-align:center;margin-top:6px;letter-spacing:1px}
+
+/* CASH BAR */
+.cash-bar-row{
+display:flex;align-items:center;gap:8px;
+padding:5px 0;
+}
+.cash-bar-label{font-size:10px;color:var(--muted);width:70px;text-align:right}
+.cash-bar{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+.cash-bar-fill{height:100%;border-radius:4px;transition:width 1.5s ease}
+.cash-bar-val{font-size:11px;font-weight:600;width:55px}
+
+/* INVENTORY */
+.inv-row{
+display:flex;justify-content:space-between;align-items:center;
+padding:5px 0;
+border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.inv-row:last-child{border-bottom:none}
+.inv-label{font-size:11px;color:var(--text)}
+.inv-badge{
+font-size:10px;font-weight:600;
+padding:2px 8px;border-radius:8px;
+}
+.inv-badge.blue{background:rgba(59,130,246,0.15);color:var(--blue)}
+.inv-badge.green{background:rgba(16,185,129,0.15);color:var(--green)}
+.inv-badge.warn{background:rgba(245,158,11,0.15);color:var(--warn)}
+
+/* NEXT DELIVERY */
+.next-delivery{
+margin-top:auto;
+background:rgba(255,255,255,0.03);
+border-radius:10px;padding:6px 8px;
+font-size:9px;color:var(--muted);
+}
+.next-delivery strong{color:var(--cyan)}
+
+/* AI TICKER */
+.ticker-strip{
+height:36px;
+background:rgba(10,14,23,0.95);
+backdrop-filter:blur(20px);
+border-top:1px solid var(--border);
+display:flex;align-items:center;
 overflow:hidden;
 position:relative;
 }
-.panel-header{
-padding:8px 12px;
-background:rgba(0,255,200,0.03);
-border-bottom:1px solid var(--border);
-font-size:9px;letter-spacing:2px;color:var(--cyan);font-weight:700;
-text-transform:uppercase;
-display:flex;align-items:center;justify-content:space-between;
+.ticker-label{
+background:linear-gradient(135deg,var(--green),var(--cyan));
+color:#000;font-size:9px;font-weight:700;
+padding:4px 12px;letter-spacing:1px;
+z-index:2;flex-shrink:0;
 }
-.panel-header .count{color:var(--muted);font-size:9px;letter-spacing:0}
-.panel-body{padding:10px 12px;overflow-y:auto;height:calc(100% - 32px)}
+.ticker-track{
+flex:1;overflow:hidden;position:relative;
+}
+.ticker-content{
+display:flex;white-space:nowrap;
+animation:tickerScroll 60s linear infinite;
+font-size:11px;color:var(--text);
+}
+.ticker-content span{
+padding:0 24px;
+}
+@keyframes tickerScroll{
+0%{transform:translateX(0)}
+100%{transform:translateX(-50%)}
+}
 
-/* ATLANTA MAP */
-.map-panel{grid-row:1/3;grid-column:1}
-.atlanta-map{position:relative;width:100%;height:100%;min-height:360px}
-.map-bg{
-position:absolute;inset:0;
-background:
-radial-gradient(ellipse 90% 80% at 50% 50%, rgba(0,255,200,0.03) 0%, transparent 70%),
-linear-gradient(180deg, rgba(0,168,255,0.02) 0%, transparent 50%);
+/* PIPELINE RINGS */
+.pipeline-container{display:flex;align-items:center;justify-content:center;flex:1}
+.pipeline-svg{width:100%;max-width:150px}
+.pipeline-legend{
+display:flex;flex-direction:column;gap:6px;
+margin-top:6px;
 }
-.map-grid{
-position:absolute;inset:0;
-background-image:
-linear-gradient(rgba(0,255,200,0.04) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
-background-size:30px 30px;
+.pipeline-legend-item{
+display:flex;align-items:center;gap:6px;font-size:10px;
 }
-.map-road{position:absolute;background:rgba(0,255,200,0.06)}
-.map-road.h{height:1px;width:80%}
-.map-road.v{width:1px;height:70%}
-.map-dot{
-position:absolute;cursor:pointer;z-index:2;
-}
-.map-dot .dot{
-width:12px;height:12px;border-radius:50%;
-position:relative;display:block;
-}
-.map-dot .dot.active{background:var(--green);box-shadow:0 0 12px var(--green),0 0 24px rgba(0,255,136,0.3)}
-.map-dot .dot.quoted{background:var(--amber);box-shadow:0 0 12px var(--amber),0 0 24px rgba(255,170,0,0.3)}
-.map-dot .dot.overdue{background:var(--red);box-shadow:0 0 12px var(--red),0 0 24px rgba(255,68,68,0.3)}
-.map-dot .dot::after{
-content:'';position:absolute;inset:-4px;border-radius:50%;
-border:1px solid currentColor;opacity:0;
-animation:ring 2.5s infinite;
-}
-.map-dot .dot.active::after{border-color:var(--green)}
-.map-dot .dot.quoted::after{border-color:var(--amber)}
-.map-dot .dot.overdue::after{border-color:var(--red)}
-@keyframes ring{0%{transform:scale(1);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
-.map-dot .label{
-font-size:8px;letter-spacing:1px;color:var(--text);
-position:absolute;left:16px;top:0;white-space:nowrap;
-text-shadow:0 0 8px var(--bg);
-}
-.map-dot .label .val{color:var(--cyan);font-weight:700}
-.map-dot .label .count{color:var(--muted);margin-left:4px}
-.map-legend{
-position:absolute;bottom:8px;left:10px;font-size:8px;
-display:flex;gap:12px;color:var(--muted);
-}
-.map-legend span{display:flex;align-items:center;gap:4px}
-.map-legend .ld{width:6px;height:6px;border-radius:50%;display:inline-block}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-label{color:var(--muted);flex:1}
+.legend-val{font-weight:600;color:#fff}
 
-/* SUBCONTRACTOR GRID */
-.sub-panel{grid-row:1;grid-column:2}
-.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sub-unit{
-border:1px solid var(--border);padding:8px 10px;
-background:rgba(0,255,200,0.02);position:relative;
+/* AI FEED WIDGET */
+.ai-feed-widget{
+flex:1;overflow:hidden;display:flex;flex-direction:column;
 }
-.sub-unit:hover{border-color:var(--cyan);background:rgba(0,255,200,0.04)}
-.sub-name{font-size:10px;font-weight:700;color:var(--text);margin-bottom:2px}
-.sub-spec{font-size:8px;color:var(--muted);margin-bottom:4px}
-.sub-status{
-font-size:8px;letter-spacing:1px;font-weight:700;
-padding:1px 6px;display:inline-block;
+.ai-feed-list{
+flex:1;overflow:hidden;
+font-size:10px;line-height:1.8;
 }
-.sub-status.deployed{color:var(--green);border:1px solid var(--green);background:rgba(0,255,136,0.1)}
-.sub-status.standby{color:var(--amber);border:1px solid var(--amber);background:rgba(255,170,0,0.1)}
-.sub-status.off{color:var(--muted);border:1px solid var(--muted);background:rgba(74,85,104,0.1)}
-.sub-assign{font-size:8px;color:var(--text);margin-top:4px;line-height:1.3}
-.sub-loc{font-size:7px;color:var(--muted);margin-top:2px}
-.reliability{margin-top:4px;display:flex;align-items:center;gap:4px}
-.reliability-label{font-size:7px;color:var(--muted)}
-.reliability-bar{flex:1;height:3px;background:rgba(255,255,255,0.1);position:relative}
-.reliability-fill{height:100%;background:var(--green);transition:width 0.6s}
-.reliability-val{font-size:7px;color:var(--green)}
-
-/* PROFIT COUNTER */
-.profit-panel{grid-row:2;grid-column:2}
-.profit-display{text-align:center;padding:12px 0}
-.profit-label{font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:4px}
-.profit-amount{
-font-size:42px;font-weight:700;color:var(--green);
-text-shadow:0 0 30px rgba(0,255,136,0.4),0 0 60px rgba(0,255,136,0.1);
-letter-spacing:2px;line-height:1;
+.ai-feed-line{
+padding:1px 0;
+opacity:0;
+animation:fadeIn 0.4s ease forwards;
 }
-.profit-sub{display:flex;justify-content:center;gap:24px;margin-top:8px}
-.profit-sub-item{text-align:center}
-.profit-sub-val{font-size:12px;color:var(--cyan);font-weight:700}
-.profit-sub-label{font-size:7px;color:var(--muted);letter-spacing:1px}
-.profit-ticker{
-margin-top:6px;font-size:8px;color:var(--muted);text-align:center;
-}
-.profit-ticker .arrow{color:var(--green);font-weight:700}
-
-/* INVENTORY PANEL */
-.inv-panel{grid-row:1/3;grid-column:3}
-.inv-item{
-padding:8px 0;border-bottom:1px solid rgba(0,255,200,0.06);
-}
-.inv-item:last-child{border-bottom:none}
-.inv-name{font-size:9px;color:var(--text);font-weight:600}
-.inv-detail{font-size:8px;color:var(--muted);margin-top:2px}
-.inv-status{
-display:inline-block;font-size:7px;letter-spacing:1px;font-weight:700;
-padding:1px 5px;margin-top:3px;
-}
-.inv-status.ordered{color:var(--amber);border:1px solid rgba(255,170,0,0.4);background:rgba(255,170,0,0.08)}
-.inv-status.transit{color:var(--blue);border:1px solid rgba(0,168,255,0.4);background:rgba(0,168,255,0.08)}
-.inv-status.delivered{color:var(--green);border:1px solid rgba(0,255,136,0.4);background:rgba(0,255,136,0.08)}
-.inv-status.stock{color:var(--cyan);border:1px solid rgba(0,255,200,0.4);background:rgba(0,255,200,0.08)}
-.inv-status.installed{color:var(--text);border:1px solid rgba(192,208,224,0.3);background:rgba(192,208,224,0.05)}
-.inv-progress{height:2px;background:rgba(255,255,255,0.06);margin-top:4px;width:100%}
-.inv-progress-fill{height:100%;transition:width 1s ease}
-
-/* CASH FLOW */
-.cash-panel{grid-row:3;grid-column:1/2}
-.waterfall{display:flex;align-items:flex-end;gap:3px;height:90px;padding:10px 0}
-.wf-bar-wrap{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
-.wf-bar{width:100%;min-height:4px;position:relative;transition:height 1.5s ease}
-.wf-val{font-size:7px;font-weight:700;margin-bottom:2px}
-.wf-label{font-size:6px;color:var(--muted);margin-top:3px;letter-spacing:0.5px}
-
-/* AI FEED */
-.feed-panel{grid-row:3;grid-column:2/4}
-.feed-body{
-font-size:10px;line-height:1.8;color:var(--green);
-background:#060810;
-height:100%;overflow:hidden;padding:8px 12px;
-}
-.feed-line{opacity:0;animation:feedIn 0.4s forwards}
-.feed-line .ts{color:var(--muted)}
-.feed-line .cmd{color:var(--cyan);font-weight:700}
-.feed-line .ok{color:var(--green)}
-.feed-line .warn{color:var(--amber)}
-.feed-line .err{color:var(--red)}
-@keyframes feedIn{to{opacity:1}}
-.cursor-blink{animation:blink 1s step-end infinite;color:var(--green)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* SCANLINE OVERLAY */
-.scanline{
-pointer-events:none;position:fixed;inset:0;z-index:999;
-background:repeating-linear-gradient(
-0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px
-);
-}
+@keyframes fadeIn{to{opacity:1}}
+.ai-feed-line .ts{color:var(--muted);font-variant-numeric:tabular-nums}
+.ai-feed-line .ev{color:var(--cyan);font-weight:600}
+.ai-feed-line .ok{color:var(--green)}
+.ai-feed-line .wr{color:var(--warn)}
 
 /* RESPONSIVE */
-@media(max-width:1100px){
-.main-grid{grid-template-columns:1fr;grid-template-rows:auto;height:auto;overflow:auto}
-.map-panel,.sub-panel,.profit-panel,.inv-panel,.cash-panel,.feed-panel{grid-row:auto;grid-column:auto}
-.panel-body{max-height:300px}
-.atlanta-map{min-height:280px}
-.sub-grid{grid-template-columns:1fr}
+@media(max-width:1200px){
+.grid{
+grid-template-columns:1fr 1fr;
+grid-template-rows:auto;
+height:auto;overflow-y:auto;
+}
+.w-revenue{grid-column:1;grid-row:auto}
+.w-pipeline{grid-column:2;grid-row:auto}
+.w-profit{grid-column:1;grid-row:auto}
+.w-marketing{grid-column:2;grid-row:auto}
+.w-sales{grid-column:1;grid-row:auto}
+.w-projects{grid-column:2;grid-row:auto}
+.w-social{grid-column:1;grid-row:auto}
+.w-satisfaction{grid-column:2;grid-row:auto}
+.w-cashflow{grid-column:1;grid-row:auto}
+.w-inventory{grid-column:2;grid-row:auto}
+.w-ai-feed{grid-column:1/3;grid-row:auto}
+html,body{overflow:auto}
+}
+@media(max-width:700px){
+.grid{grid-template-columns:1fr;gap:8px;padding:8px}
+.w-marketing,.w-ai-feed{grid-column:1}
+.header{padding:8px 12px}
+.logo{font-size:12px}
+}
+
+/* ANIMATE RINGS ON LOAD */
+.ring-progress{
+transition:stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1);
 }
 </style>
 </head>
 <body>
 
-<div class="scanline"></div>
-
-<!-- TOP BAR -->
-<div class="topbar">
-<div class="topbar-brand">SYNERGY SMART HOME // OPERATIONS CENTER</div>
-<div class="topbar-right">
-<span><span class="status-dot green"></span><span style="color:var(--green);font-size:10px">ALL SYSTEMS NOMINAL</span></span>
-<span class="ai-tag"><span class="status-dot cyan"></span>AI COO: ONLINE</span>
-<span class="uptime" id="uptime">UPTIME: 47d 12h 33m 00s</span>
+<!-- HEADER -->
+<header class="header">
+<div class="header-left">
+<div class="logo">SYNERGY SMART HOME</div>
+<div class="ai-status">
+<span class="ai-dot"></span>
+AI Running Your Business
+</div>
+</div>
+<div class="header-right">
+<span class="user-badge">Stephen Schnugg · CEO</span>
 <span class="clock" id="clock">00:00:00</span>
 </div>
-</div>
+</header>
 
-<!-- METRICS TICKER -->
-<div class="ticker">
-<div class="ticker-item"><div class="ticker-val" id="rev-mtd">$47,200</div><div class="ticker-label">Revenue MTD</div></div>
-<div class="ticker-item"><div class="ticker-val">$128,400</div><div class="ticker-label">Pipeline Value</div></div>
-<div class="ticker-item"><div class="ticker-val green">6</div><div class="ticker-label">Active Projects</div></div>
-<div class="ticker-item"><div class="ticker-val">14</div><div class="ticker-label">Leads in Funnel</div></div>
-<div class="ticker-item"><div class="ticker-val amber">34%</div><div class="ticker-label">Close Rate</div></div>
-<div class="ticker-item"><div class="ticker-val green">38s</div><div class="ticker-label">Avg Response</div></div>
-<div class="ticker-item"><div class="ticker-val" style="color:var(--amber)">4.9★</div><div class="ticker-label">Google Rating</div></div>
-<div class="ticker-item"><div class="ticker-val">78%</div><div class="ticker-label">Sub Utilization</div></div>
-</div>
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<linearGradient id="gRevenue" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#10b981"/>
+<stop offset="100%" stop-color="#06b6d4"/>
+</linearGradient>
+<linearGradient id="gProfit" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#00ff88"/>
+<stop offset="100%" stop-color="#06b6d4"/>
+</linearGradient>
+</defs>
+</svg>
 
-<!-- MAIN GRID -->
-<div class="main-grid">
+<!-- GRID -->
+<div class="grid">
 
-<!-- ATLANTA MAP -->
-<div class="panel map-panel">
-<div class="panel-header">ATLANTA OPERATIONS MAP <span class="count">9 ACTIVE ZONES</span></div>
-<div class="panel-body" style="padding:0;height:calc(100% - 32px)">
-<div class="atlanta-map">
-<div class="map-bg"></div>
-<div class="map-grid"></div>
-<!-- Roads -->
-<div class="map-road h" style="top:35%;left:10%"></div>
-<div class="map-road h" style="top:50%;left:5%"></div>
-<div class="map-road h" style="top:65%;left:15%"></div>
-<div class="map-road v" style="left:40%;top:10%"></div>
-<div class="map-road v" style="left:55%;top:20%"></div>
-<div class="map-road v" style="left:70%;top:5%"></div>
-<!-- Diagonal (I-85 / I-75 feel) -->
-<div class="map-road" style="position:absolute;width:1px;height:90%;top:5%;left:45%;transform:rotate(15deg);background:rgba(0,255,200,0.08)"></div>
-<div class="map-road" style="position:absolute;width:1px;height:80%;top:10%;left:50%;transform:rotate(-12deg);background:rgba(0,255,200,0.08)"></div>
-
-<!-- Project Dots -->
-<div class="map-dot" style="top:12%;left:55%">
-<span class="dot active" style="width:8px;height:8px"></span>
-<div class="label">ALPHARETTA <span class="val">$6.8K</span><span class="count">×1</span></div>
-</div>
-<div class="map-dot" style="top:25%;left:42%">
-<span class="dot active"></span>
-<div class="label">SANDY SPRINGS <span class="val">$24.3K</span><span class="count">×2</span></div>
-</div>
-<div class="map-dot" style="top:25%;left:43%" style="z-index:1">
-<span class="dot quoted" style="width:7px;height:7px;margin-left:14px;margin-top:-2px"></span>
-</div>
-<div class="map-dot" style="top:38%;left:35%">
-<span class="dot active" style="width:14px;height:14px"></span>
-<div class="label">BUCKHEAD <span class="val">$53K</span><span class="count">×3</span></div>
-</div>
-<div class="map-dot" style="top:40%;left:37%">
-<span class="dot active" style="width:8px;height:8px"></span>
-</div>
-<div class="map-dot" style="top:36%;left:38%">
-<span class="dot quoted" style="width:7px;height:7px"></span>
-</div>
-<div class="map-dot" style="top:50%;left:58%">
-<span class="dot active" style="width:10px;height:10px"></span>
-<div class="label">BROOKHAVEN <span class="val">$9.4K</span><span class="count">×1</span></div>
-</div>
-<div class="map-dot" style="top:55%;left:40%">
-<span class="dot active" style="width:9px;height:9px"></span>
-<div class="label">MIDTOWN <span class="val">$12.2K</span><span class="count">×1</span></div>
-</div>
-<div class="map-dot" style="top:68%;left:62%">
-<span class="dot active" style="width:10px;height:10px"></span>
-<div class="label">DECATUR <span class="val">$16.9K</span><span class="count">×1</span></div>
-</div>
-
-<!-- Legend -->
-<div class="map-legend">
-<span><span class="ld" style="background:var(--green);box-shadow:0 0 4px var(--green)"></span>ACTIVE</span>
-<span><span class="ld" style="background:var(--amber);box-shadow:0 0 4px var(--amber)"></span>QUOTED</span>
-<span><span class="ld" style="background:var(--red);box-shadow:0 0 4px var(--red)"></span>OVERDUE</span>
+<!-- 1. REVENUE RING -->
+<div class="widget w-revenue">
+<div class="widget-title">Monthly Revenue</div>
+<div class="ring-container">
+<svg class="ring-svg" viewBox="0 0 120 120">
+<circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="url(#gRevenue)" stroke-width="10"
+stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round"
+transform="rotate(-90 60 60)" class="ring-progress" data-target="47.12"/>
+</svg>
+<div class="ring-center">
+<div class="ring-big-num">$47.2K</div>
+<div class="ring-sub-label">of $55K target</div>
 </div>
 </div>
+<div class="ring-stats">
+<div class="ring-stat"><div class="ring-stat-val">$142K</div><div class="ring-stat-label">QTD</div></div>
+<div class="ring-stat"><div class="ring-stat-val">$142K</div><div class="ring-stat-label">YTD</div></div>
+<div class="ring-stat"><div class="ring-stat-val" style="color:var(--green)">85%</div><div class="ring-stat-label">Target</div></div>
 </div>
 </div>
 
-<!-- SUBCONTRACTOR GRID -->
-<div class="panel sub-panel">
-<div class="panel-header">FIELD OPERATIVES <span class="count">4 UNITS</span></div>
-<div class="panel-body">
-<div class="sub-grid">
-<div class="sub-unit">
-<div class="sub-name">MIKE REYNOLDS</div>
-<div class="sub-spec">PRE-WIRE • LOW VOLTAGE</div>
-<span class="sub-status deployed">DEPLOYED</span>
-<div class="sub-assign">Pre-wire — Sandy Springs New Build</div>
-<div class="sub-loc">789 Roswell Rd, Sandy Springs</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:96%;background:var(--green)"></div></div><span class="reliability-val">96%</span></div>
+<!-- 2. PIPELINE RINGS -->
+<div class="widget w-pipeline">
+<div class="widget-title">Pipeline</div>
+<div class="pipeline-container">
+<svg class="pipeline-svg" viewBox="0 0 120 120">
+<!-- Outer - Leads (blue) -->
+<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(59,130,246,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="52" fill="none" stroke="var(--blue)" stroke-width="8"
+stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round"
+transform="rotate(-90 60 60)" class="ring-progress" data-target="98.02"/>
+<!-- Middle - Proposals (purple) -->
+<circle cx="60" cy="60" r="40" fill="none" stroke="rgba(139,92,246,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="40" fill="none" stroke="var(--purple)" stroke-width="8"
+stroke-dasharray="251.33" stroke-dashoffset="251.33" stroke-linecap="round"
+transform="rotate(-90 60 60)" class="ring-progress" data-target="100.53"/>
+<!-- Inner - Closed (green) -->
+<circle cx="60" cy="60" r="28" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="8"/>
+<circle cx="60" cy="60" r="28" fill="none" stroke="var(--green)" stroke-width="8"
+stroke-dasharray="175.93" stroke-dashoffset="175.93" stroke-linecap="round"
+transform="rotate(-90 60 60)" class="ring-progress" data-target="58.64"/>
+</svg>
 </div>
-<div class="sub-unit">
-<div class="sub-name">TECHPRO AV — M. DAVIS</div>
-<div class="sub-spec">HOME THEATER • DISTRIBUTED AUDIO</div>
-<span class="sub-status deployed">DEPLOYED</span>
-<div class="sub-assign">Trim-out — Buckhead Theater Room</div>
-<div class="sub-loc">1247 Peachtree St, Buckhead</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:100%;background:var(--cyan)"></div></div><span class="reliability-val">100%</span></div>
+<div class="pipeline-legend">
+<div class="pipeline-legend-item">
+<span class="legend-dot" style="background:var(--blue)"></span>
+<span class="legend-label">Leads</span>
+<span class="legend-val">14<span style="color:var(--muted);font-weight:400">/20</span></span>
 </div>
-<div class="sub-unit">
-<div class="sub-name">CARLOS MARTINEZ</div>
-<div class="sub-spec">MOTORIZED SHADES • LUTRON</div>
-<span class="sub-status standby">STANDBY</span>
-<div class="sub-assign">Final walk — Alpharetta (Tomorrow)</div>
-<div class="sub-loc">2341 Westside Pkwy, Alpharetta</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:92%;background:var(--green)"></div></div><span class="reliability-val">92%</span></div>
+<div class="pipeline-legend-item">
+<span class="legend-dot" style="background:var(--purple)"></span>
+<span class="legend-label">Proposals</span>
+<span class="legend-val">6<span style="color:var(--muted);font-weight:400">/10</span></span>
 </div>
-<div class="sub-unit">
-<div class="sub-name">BRAD THOMPSON</div>
-<div class="sub-spec">LIGHTING CONTROL • LUTRON</div>
-<span class="sub-status deployed">DEPLOYED</span>
-<div class="sub-assign">Rough-in — Brookhaven Lutron</div>
-<div class="sub-loc">1523 Peachtree Circle, Brookhaven</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:88%;background:var(--green)"></div></div><span class="reliability-val">88%</span></div>
-</div>
-<div class="sub-unit">
-<div class="sub-name">METRO SOUND — J. LEE</div>
-<div class="sub-spec">AUDIO SYSTEMS • SONANCE</div>
-<span class="sub-status deployed">DEPLOYED</span>
-<div class="sub-assign">Programming — Midtown Audio</div>
-<div class="sub-loc">892 Highland Ave, Midtown</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:94%;background:var(--green)"></div></div><span class="reliability-val">94%</span></div>
-</div>
-<div class="sub-unit" style="border-color:rgba(74,85,104,0.3)">
-<div class="sub-name" style="color:var(--muted)">— RESERVE SLOT —</div>
-<div class="sub-spec">UNASSIGNED</div>
-<span class="sub-status off">OFF</span>
-<div class="sub-assign" style="color:var(--muted)">No active assignment</div>
-<div class="sub-loc">&nbsp;</div>
-<div class="reliability"><span class="reliability-label">REL</span><div class="reliability-bar"><div class="reliability-fill" style="width:0%"></div></div><span class="reliability-val">—</span></div>
-</div>
+<div class="pipeline-legend-item">
+<span class="legend-dot" style="background:var(--green)"></span>
+<span class="legend-label">Closed</span>
+<span class="legend-val">4<span style="color:var(--muted);font-weight:400">/6</span></span>
 </div>
 </div>
 </div>
 
-<!-- PROFIT COUNTER -->
-<div class="panel profit-panel">
-<div class="panel-header">NET PROFIT ACCUMULATOR <span class="count">LIVE</span></div>
-<div class="panel-body" style="display:flex;align-items:center;justify-content:center">
-<div class="profit-display">
-<div class="profit-label">2026 NET PROFIT</div>
-<div class="profit-amount" id="profit-counter">$22,560.00</div>
-<div class="profit-sub">
-<div class="profit-sub-item"><div class="profit-sub-val">$728/day</div><div class="profit-sub-label">DAILY RATE</div></div>
-<div class="profit-sub-item"><div class="profit-sub-val">$30.33/hr</div><div class="profit-sub-label">HOURLY</div></div>
-<div class="profit-sub-item"><div class="profit-sub-val" style="color:var(--green)">$265,720</div><div class="profit-sub-label">PROJECTED ANNUAL</div></div>
+<!-- 3. PROFIT ACCUMULATOR -->
+<div class="widget w-profit">
+<div class="widget-title">Net Profit · Live</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+<div class="profit-num" id="profit">$22,560.00</div>
+<div class="profit-meta">
+<div class="profit-meta-item"><div class="profit-meta-val">$728</div><div class="profit-meta-label">Daily</div></div>
+<div class="profit-meta-item"><div class="profit-meta-val">$30.33</div><div class="profit-meta-label">Hourly</div></div>
+<div class="profit-meta-item"><div class="profit-meta-val" style="color:var(--profit)">$265K</div><div class="profit-meta-label">Projected</div></div>
 </div>
-<div class="profit-ticker"><span class="arrow">▲</span> +$0.84/min — accumulating<span class="cursor-blink">█</span></div>
+<div class="profit-ticker"><span class="arr">▲</span> +$0.84/min · accumulating</div>
+</div>
+</div>
+
+<!-- 4. MARKETING CAMPAIGNS -->
+<div class="widget w-marketing">
+<div class="widget-title">Marketing Campaigns</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px">
+<div class="row-item">
+<svg class="mini-ring" viewBox="0 0 36 36">
+<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--blue)" stroke-width="3"
+stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
+transform="rotate(-90 18 18)" class="ring-progress" data-target="50.97"/>
+</svg>
+<div class="row-info">
+<div class="row-label">Google Ads</div>
+<div class="row-detail">$420 / $1,000 budget · 12 leads</div>
+</div>
+<div class="row-val" style="color:var(--blue)">42%</div>
+</div>
+<div class="row-item">
+<svg class="mini-ring" viewBox="0 0 36 36">
+<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--purple)" stroke-width="3"
+stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
+transform="rotate(-90 18 18)" class="ring-progress" data-target="10.56"/>
+</svg>
+<div class="row-info">
+<div class="row-label">Email Nurture</div>
+<div class="row-detail">34 active sequences · 3 replies today</div>
+</div>
+<div class="row-val" style="color:var(--purple)">88%</div>
+</div>
+<div class="row-item">
+<svg class="mini-ring" viewBox="0 0 36 36">
+<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--green)" stroke-width="3"
+stroke-dasharray="87.96" stroke-dashoffset="0" stroke-linecap="round"
+transform="rotate(-90 18 18)" class="ring-progress" data-target="0"/>
+</svg>
+<div class="row-info">
+<div class="row-label">Social Media</div>
+<div class="row-detail">3/3 posts this week · 1.2K reach</div>
+</div>
+<div class="row-val" style="color:var(--green)">100%</div>
+</div>
+<div class="row-item">
+<svg class="mini-ring" viewBox="0 0 36 36">
+<circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="18" cy="18" r="14" fill="none" stroke="var(--cyan)" stroke-width="3"
+stroke-dasharray="87.96" stroke-dashoffset="87.96" stroke-linecap="round"
+transform="rotate(-90 18 18)" class="ring-progress" data-target="35.18"/>
+</svg>
+<div class="row-info">
+<div class="row-label">Builder Outreach</div>
+<div class="row-detail">3/5 builders contacted this month</div>
+</div>
+<div class="row-val" style="color:var(--cyan)">60%</div>
 </div>
 </div>
 </div>
 
-<!-- INVENTORY -->
-<div class="panel inv-panel">
-<div class="panel-header">MATERIALS & LOGISTICS <span class="count">5 ITEMS</span></div>
-<div class="panel-body">
-<div class="inv-item">
-<div class="inv-name">Crestron MC4-R ×2</div>
-<div class="inv-detail">Processing Hub — Buckhead Theater</div>
-<span class="inv-status transit">IN TRANSIT</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">ETA Feb 1</span>
-<div style="font-size:7px;color:var(--muted);margin-top:2px">UPS 1Z999AA10428793211</div>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:65%;background:var(--blue)"></div></div>
+<!-- 5. SALES SUPPORT -->
+<div class="widget w-sales">
+<div class="widget-title">Sales Support</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0">
+<div class="metric"><span class="metric-label">Quotes Awaiting</span><span class="metric-val cyan">3</span></div>
+<div class="metric"><span class="metric-label">Follow-ups Today</span><span class="metric-val green">5</span></div>
+<div class="metric"><span class="metric-label">Consultations This Week</span><span class="metric-val blue">2</span></div>
+<div class="metric"><span class="metric-label">Win Rate</span><span class="metric-val green">34% <span style="font-size:9px">↑ 28%</span></span></div>
+<div class="highlight">
+<div class="highlight-label">🔥 Hottest Lead</div>
+<div class="highlight-val">David Okafor — $32K Crestron</div>
 </div>
-<div class="inv-item">
-<div class="inv-name">Lutron Palladiom Rollers ×8</div>
-<div class="inv-detail">Motorized Shades — Sandy Springs</div>
-<span class="inv-status delivered">DELIVERED</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">Warehouse</span>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:85%;background:var(--green)"></div></div>
-</div>
-<div class="inv-item">
-<div class="inv-name">Sonance VP66 Speakers ×12</div>
-<div class="inv-detail">Distributed Audio — Midtown</div>
-<span class="inv-status ordered">ORDERED</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">ETA Feb 5</span>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:25%;background:var(--amber)"></div></div>
-</div>
-<div class="inv-item">
-<div class="inv-name">Crestron TSW-1070 Touch Panel</div>
-<div class="inv-detail">Control Interface — Buckhead</div>
-<span class="inv-status transit">IN TRANSIT</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">ETA Jan 31</span>
-<div style="font-size:7px;color:var(--muted);margin-top:2px">FedEx 7489 2310 9833</div>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:75%;background:var(--blue)"></div></div>
-</div>
-<div class="inv-item">
-<div class="inv-name">Lutron RadioRA3 Processor</div>
-<div class="inv-detail">Lighting Control — Brookhaven</div>
-<span class="inv-status stock">IN STOCK</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">Warehouse</span>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:100%;background:var(--cyan)"></div></div>
-</div>
-<div class="inv-item">
-<div class="inv-name">Crestron DM-NVX-E30 ×2</div>
-<div class="inv-detail">Video Distribution — Decatur</div>
-<span class="inv-status ordered">ORDERED</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">ETA Feb 8</span>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:15%;background:var(--amber)"></div></div>
-</div>
-<div class="inv-item">
-<div class="inv-name">Sonance Landscape Series ×6</div>
-<div class="inv-detail">Outdoor Audio — Sandy Springs</div>
-<span class="inv-status transit">IN TRANSIT</span>
-<span style="font-size:7px;color:var(--muted);margin-left:4px">ETA Feb 3</span>
-<div class="inv-progress"><div class="inv-progress-fill" style="width:50%;background:var(--blue)"></div></div>
+<div class="highlight" style="margin-top:4px">
+<div class="highlight-label">📅 Next Consultation</div>
+<div class="highlight-val" style="color:var(--cyan)">Today 2:00 PM</div>
 </div>
 </div>
 </div>
 
-<!-- CASH FLOW WATERFALL -->
-<div class="panel cash-panel">
-<div class="panel-header">CASH FLOW WATERFALL — JAN 2026</div>
-<div class="panel-body">
-<div class="waterfall" id="waterfall">
-<div class="wf-bar-wrap">
-<div class="wf-val" style="color:var(--cyan)">$47.2K</div>
-<div class="wf-bar" id="wf-rev" style="height:0;background:var(--cyan)"></div>
-<div class="wf-label">REVENUE</div>
+<!-- 6. PROJECTS / SERVICE -->
+<div class="widget w-projects">
+<div class="widget-title">Active Projects</div>
+<div style="flex:1;display:flex;flex-direction:column">
+<div class="proj-item">
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
+<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--blue)" stroke-width="3"
+stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
+transform="rotate(-90 15 15)" class="ring-progress" data-target="58.75"/>
+</svg>
+<div class="proj-info"><div class="proj-name">Buckhead Pre-Wire</div></div>
+<div class="proj-pct" style="color:var(--blue)">15%</div>
 </div>
-<div class="wf-bar-wrap">
-<div class="wf-val" style="color:var(--red)">-$12.8K</div>
-<div class="wf-bar" id="wf-sub" style="height:0;background:var(--red);opacity:0.7"></div>
-<div class="wf-label">SUBS</div>
+<div class="proj-item">
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
+<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--purple)" stroke-width="3"
+stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
+transform="rotate(-90 15 15)" class="ring-progress" data-target="24.19"/>
+</svg>
+<div class="proj-info"><div class="proj-name">Buckhead Shades</div></div>
+<div class="proj-pct" style="color:var(--purple)">65%</div>
 </div>
-<div class="wf-bar-wrap">
-<div class="wf-val" style="color:var(--amber)">-$8.2K</div>
-<div class="wf-bar" id="wf-mat" style="height:0;background:var(--amber);opacity:0.7"></div>
-<div class="wf-label">MATERIALS</div>
+<div class="proj-item">
+<svg class="mini-ring-sm" viewBox="0 0 30 30" style="width:28px;height:28px">
+<circle cx="15" cy="15" r="11" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+<circle cx="15" cy="15" r="11" fill="none" stroke="var(--green)" stroke-width="3"
+stroke-dasharray="69.12" stroke-dashoffset="69.12" stroke-linecap="round"
+transform="rotate(-90 15 15)" class="ring-progress" data-target="6.91"/>
+</svg>
+<div class="proj-info"><div class="proj-name">W Paces Ferry Programming</div></div>
+<div class="proj-pct" style="color:var(--green)">90%</div>
 </div>
-<div class="wf-bar-wrap">
-<div class="wf-val" style="color:var(--muted)">-$3.6K</div>
-<div class="wf-bar" id="wf-ovh" style="height:0;background:var(--muted);opacity:0.5"></div>
-<div class="wf-label">OVERHEAD</div>
-</div>
-<div class="wf-bar-wrap">
-<div class="wf-val" style="color:var(--green);font-weight:700">$22.6K</div>
-<div class="wf-bar" id="wf-net" style="height:0;background:var(--green)"></div>
-<div class="wf-label">NET</div>
-</div>
+<div class="sub-status-row">
+<span class="sub-pill deployed">4 Deployed</span>
+<span class="sub-pill standby">1 Standby</span>
+<span class="sub-pill off">1 Off</span>
 </div>
 </div>
 </div>
 
-<!-- AI OPERATIONS FEED -->
-<div class="panel feed-panel">
-<div class="panel-header">AI OPERATIONS LOG <span class="count" id="feed-count">STREAMING</span></div>
-<div class="feed-body" id="feed"></div>
+<!-- 7. SOCIAL -->
+<div class="widget w-social">
+<div class="widget-title">Social Pulse</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:0">
+<div class="social-row">
+<span class="social-icon">📸</span>
+<span class="social-name">Instagram</span>
+<span class="social-num">847</span>
+<span class="social-delta">+23</span>
+</div>
+<div class="social-row">
+<span class="social-icon">⭐</span>
+<span class="social-name">Google Business</span>
+<span class="social-num">4.9★</span>
+<span class="social-delta">47 reviews</span>
+</div>
+<div class="social-row">
+<span class="social-icon">👥</span>
+<span class="social-name">Facebook</span>
+<span class="social-num">312</span>
+<span class="social-delta">+8</span>
+</div>
+<div class="highlight" style="margin-top:auto">
+<div class="highlight-label">📅 Next Post</div>
+<div class="highlight-val" style="color:var(--cyan);font-size:11px">Tomorrow 11am — Theater showcase</div>
+</div>
+</div>
 </div>
 
-</div><!-- /main-grid -->
+<!-- 8. CUSTOMER SATISFACTION -->
+<div class="widget w-satisfaction">
+<div class="widget-title">Customer Satisfaction</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+<div class="ring-container" style="margin-bottom:4px">
+<svg viewBox="0 0 100 100" style="width:90px;max-width:90px">
+<circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+<circle cx="50" cy="50" r="40" fill="none" stroke="url(#gRevenue)" stroke-width="7"
+stroke-dasharray="251.33" stroke-dashoffset="251.33" stroke-linecap="round"
+transform="rotate(-90 50 50)" class="ring-progress" data-target="15.08"/>
+</svg>
+<div class="ring-center">
+<div style="font-size:22px;font-weight:700;color:#fff">94</div>
+<div style="font-size:8px;color:var(--muted)">NPS</div>
+</div>
+</div>
+<div class="stars">★★★★★ <span style="font-size:10px;color:var(--muted)">4.9 (47)</span></div>
+<div class="metric" style="margin-top:4px"><span class="metric-label">Response Rate</span><span class="metric-val green">100%</span></div>
+<div style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Last review: 5★ — 2 hours ago</div>
+</div>
+</div>
+
+<!-- 9. CASH FLOW -->
+<div class="widget w-cashflow">
+<div class="widget-title">Cash Flow · January</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px">
+<div class="cash-bar-row">
+<span class="cash-bar-label">Collected</span>
+<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:linear-gradient(90deg,var(--green),var(--cyan))" data-width="62%"></div></div>
+<span class="cash-bar-val" style="color:var(--green)">$38.6K</span>
+</div>
+<div class="cash-bar-row">
+<span class="cash-bar-label">Outstanding</span>
+<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--blue)" data-width="38%"></div></div>
+<span class="cash-bar-val" style="color:var(--blue)">$23.4K</span>
+</div>
+<div class="cash-bar-row">
+<span class="cash-bar-label">Overdue</span>
+<div class="cash-bar"><div class="cash-bar-fill" style="width:0%;background:var(--crit)" data-width="7%"></div></div>
+<span class="cash-bar-val" style="color:var(--crit)">$4.2K</span>
+</div>
+</div>
+</div>
+
+<!-- 10. INVENTORY -->
+<div class="widget w-inventory">
+<div class="widget-title">Inventory</div>
+<div style="flex:1;display:flex;flex-direction:column">
+<div class="inv-row">
+<span class="inv-label">En Route</span>
+<span class="inv-badge blue">3</span>
+</div>
+<div class="inv-row">
+<span class="inv-label">In Stock</span>
+<span class="inv-badge green">4</span>
+</div>
+<div class="inv-row">
+<span class="inv-label">On Order</span>
+<span class="inv-badge warn">2</span>
+</div>
+<div class="next-delivery">
+📦 Next: <strong>Jan 31 — Crestron MC4-R</strong>
+</div>
+</div>
+</div>
+
+<!-- 11. AI ACTIVITY FEED -->
+<div class="widget w-ai-feed">
+<div class="widget-title">AI Activity</div>
+<div class="ai-feed-widget">
+<div class="ai-feed-list" id="aiFeed"></div>
+</div>
+</div>
+
+</div><!-- /grid -->
+
+<!-- AI TICKER STRIP -->
+<div class="ticker-strip">
+<div class="ticker-label">AI LIVE</div>
+<div class="ticker-track">
+<div class="ticker-content" id="tickerContent">
+<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 65% complete → 📊 Win rate ↑ 34% → 🔔 New lead: Lisa Patel $22.4K</span>
+<span>🤖 38s lead response → 📝 Proposal sent Marcus Williams $8.4K → ⭐ 5-star review collected → 📧 Builder nurture x3 → 💰 $7,100 deposit received → 📱 Follow-up #3 sent Robert Kim → 🏗️ Buckhead Theater 65% complete → 📊 Win rate ↑ 34% → 🔔 New lead: Lisa Patel $22.4K</span>
+</div>
+</div>
+</div>
 
 <script>
 // === CLOCK ===
@@ -518,113 +717,63 @@ document.getElementById('clock').textContent=h+':'+m+':'+s;
 setInterval(updateClock,1000);
 updateClock();
 
-// === UPTIME ===
-let uptimeSec=47*86400+12*3600+33*60;
-function updateUptime(){
-uptimeSec++;
-const d=Math.floor(uptimeSec/86400);
-const h=Math.floor((uptimeSec%86400)/3600);
-const m=Math.floor((uptimeSec%3600)/60);
-const s=uptimeSec%60;
-document.getElementById('uptime').textContent=
-'UPTIME: '+d+'d '+String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
-}
-setInterval(updateUptime,1000);
-
 // === PROFIT COUNTER ===
 let profit=22560.00;
-const dailyRate=728;
-const perSecond=dailyRate/86400;
-function updateProfit(){
-profit+=perSecond;
-document.getElementById('profit-counter').textContent='$'+profit.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const perSec=728/86400;
+function tickProfit(){
+profit+=perSec;
+document.getElementById('profit').textContent='$'+profit.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
-setInterval(updateProfit,1000);
+setInterval(tickProfit,1000);
 
-// === REVENUE MTD COUNTER (subtle) ===
-let revMtd=47200;
-function updateRevMtd(){
-revMtd+=Math.random()*0.5;
-document.getElementById('rev-mtd').textContent='$'+Math.floor(revMtd).toLocaleString();
-}
-setInterval(updateRevMtd,3000);
-
-// === WATERFALL ANIMATION ===
+// === ANIMATE RINGS ON LOAD ===
 setTimeout(()=>{
-document.getElementById('wf-rev').style.height='80px';
-setTimeout(()=>document.getElementById('wf-sub').style.height='22px',200);
-setTimeout(()=>document.getElementById('wf-mat').style.height='14px',400);
-setTimeout(()=>document.getElementById('wf-ovh').style.height='6px',600);
-setTimeout(()=>document.getElementById('wf-net').style.height='38px',800);
-},500);
+document.querySelectorAll('.ring-progress').forEach(el=>{
+const target=parseFloat(el.getAttribute('data-target'));
+el.style.strokeDashoffset=target;
+});
+},300);
+
+// === ANIMATE CASH BARS ===
+setTimeout(()=>{
+document.querySelectorAll('.cash-bar-fill[data-width]').forEach(el=>{
+el.style.width=el.getAttribute('data-width');
+});
+},600);
 
 // === AI FEED ===
-const feedEntries=[
-{ts:'09:02:31',cmd:'LEAD_INTAKE',msg:'New lead: David Thompson | Brookhaven | $15.8K AV Pre-Wire | <span class="ok">RESPONSE_TIME: 38s ✓</span>'},
-{ts:'09:04:12',cmd:'AUTO_RESPOND',msg:'Personalized intro sent → David Thompson | Template: AV_PREWIRE_V3 | <span class="ok">DELIVERED ✓</span>'},
-{ts:'09:15:44',cmd:'NURTURE_SEQ',msg:'Follow-up #2 queued → Sarah Chen | Buckhead | Motorized Shades $8.4K'},
-{ts:'09:22:08',cmd:'PROJECT_UPDATE',msg:'Client auto-notified → Patterson Family | Buckhead Theater | <span class="ok">Phase: TRIM_OUT 65%</span>'},
-{ts:'09:33:17',cmd:'SUB_DISPATCH',msg:'Mike Reynolds confirmed → Sandy Springs pre-wire | ETA 0800 | <span class="ok">ACK ✓</span>'},
-{ts:'09:41:55',cmd:'PROPOSAL_GEN',msg:'Generating proposal → Jennifer Martinez | Home Theater $28.5K | Sandy Springs'},
-{ts:'09:45:02',cmd:'INVOICE_SENT',msg:'Invoice #1047 → Rodriguez Family | $12,200 | Midtown Audio | <span class="ok">DELIVERED ✓</span>'},
-{ts:'09:52:30',cmd:'REVIEW_REQ',msg:'Google review request → Johnson Residence | Alpharetta Shades | <span class="ok">5★ RECEIVED</span>'},
-{ts:'10:01:14',cmd:'BUILDER_NURTURE',msg:'Monthly check-in → Amanda Foster / Keystone Builders | <span class="ok">EMAIL SENT ✓</span>'},
-{ts:'10:08:33',cmd:'LEAD_INTAKE',msg:'New lead: Lisa Patel | Midtown | $22.4K Smart Retrofit | <span class="ok">RESPONSE_TIME: 45s ✓</span>'},
-{ts:'10:15:21',cmd:'INVENTORY',msg:'Crestron TSW-1070 shipped → FedEx 7489 2310 9833 | <span class="ok">ETA Jan 31</span>'},
-{ts:'10:22:47',cmd:'SCHEDULE',msg:'Tomorrow agenda compiled → 3 jobs active | 1 consultation | 1 final walk'},
-{ts:'10:30:09',cmd:'PAYMENT_RCV',msg:'Payment received → Patterson Family | $9,250 deposit | <span class="ok">QUICKBOOKS SYNC ✓</span>'},
-{ts:'10:38:55',cmd:'SUB_CHECK',msg:'Brad Thompson GPS ping → On-site Brookhaven | <span class="ok">STATUS: ACTIVE</span>'},
-{ts:'10:44:12',cmd:'SOCIAL_POST',msg:'Instagram post queued → Buckhead Theater progress | Scheduled 11:00 AM | <span class="ok">APPROVED ✓</span>'},
-{ts:'10:51:33',cmd:'LEAD_SCORE',msg:'Lead upgraded: Michael Anderson | Buckhead | $34.5K Crestron | <span class="warn">HOT — DECISION THIS WEEK</span>'},
-{ts:'10:58:07',cmd:'AUTO_FOLLOWUP',msg:'Follow-up #3 sent → Robert Kim | Decatur | Lighting $6.2K | <span class="ok">DELIVERED ✓</span>'},
-{ts:'11:05:44',cmd:'MARGIN_CALC',msg:'Buckhead Theater margin analysis → Revenue $18.5K | Cost $11.2K | <span class="ok">NET: $7,300 (39.5%)</span>'},
-{ts:'11:12:19',cmd:'SYSTEM_CHECK',msg:'All agents operational | Uptime 47d | Queue: 0 | <span class="ok">ALL SYSTEMS NOMINAL ✓</span>'},
-{ts:'11:18:02',cmd:'LEAD_INTAKE',msg:'New lead: David Okafor | Sandy Springs | $32K Whole-Home | <span class="ok">RESPONSE_TIME: 28s ✓</span>'},
+const feedItems=[
+{ts:'09:02',ev:'LEAD',msg:'New lead: David Thompson · Brookhaven · $15.8K AV'},
+{ts:'09:04',ev:'RESPOND',msg:'Personalized intro sent → David Thompson · <span class="ok">38s ✓</span>'},
+{ts:'09:15',ev:'NURTURE',msg:'Follow-up #2 queued → Sarah Chen · Shades $8.4K'},
+{ts:'09:22',ev:'UPDATE',msg:'Client notified → Patterson Family · <span class="ok">Trim 65%</span>'},
+{ts:'09:33',ev:'DISPATCH',msg:'Mike Reynolds confirmed → Sandy Springs pre-wire'},
+{ts:'09:45',ev:'INVOICE',msg:'Invoice #1047 → Rodriguez · $12,200 · <span class="ok">Sent ✓</span>'},
+{ts:'09:52',ev:'REVIEW',msg:'Google review request sent → Johnson · <span class="ok">5★ received</span>'},
+{ts:'10:01',ev:'BUILDER',msg:'Monthly check-in → Amanda Foster / Keystone Builders'},
+{ts:'10:08',ev:'LEAD',msg:'New lead: Lisa Patel · Midtown · $22.4K Smart Retrofit'},
+{ts:'10:30',ev:'PAYMENT',msg:'$9,250 deposit received → Patterson Family · <span class="ok">QB sync ✓</span>'},
+{ts:'10:44',ev:'SOCIAL',msg:'Instagram post queued → Buckhead Theater progress · 11am'},
+{ts:'10:51',ev:'SCORE',msg:'Lead upgraded: Michael Anderson · $34.5K · <span class="wr">HOT</span>'},
+{ts:'11:05',ev:'MARGIN',msg:'Buckhead Theater → Revenue $18.5K · Net $7,300 (39.5%)'},
+{ts:'11:18',ev:'LEAD',msg:'New lead: David Okafor · $32K Whole-Home · <span class="ok">28s ✓</span>'},
 ];
-
-const feedEl=document.getElementById('feed');
+const feedEl=document.getElementById('aiFeed');
 let feedIdx=0;
-let feedCount=0;
-
-function addFeedLine(){
-const entry=feedEntries[feedIdx%feedEntries.length];
-// Generate real-ish timestamp based on current time
+function addFeed(){
+const item=feedItems[feedIdx%feedItems.length];
 const now=new Date();
-const h=String(now.getHours()).padStart(2,'0');
-const m=String(now.getMinutes()).padStart(2,'0');
-const s=String(now.getSeconds()).padStart(2,'0');
-const ts=feedIdx<feedEntries.length?entry.ts:h+':'+m+':'+s;
-
+const ts=feedIdx<feedItems.length?item.ts:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
 const line=document.createElement('div');
-line.className='feed-line';
-line.innerHTML='<span class="ts">['+ts+']</span> <span class="cmd">'+entry.cmd+'</span> >> '+entry.msg;
+line.className='ai-feed-line';
+line.innerHTML='<span class="ts">'+ts+'</span> <span class="ev">'+item.ev+'</span> '+item.msg;
 feedEl.appendChild(line);
-
-// Keep max 30 lines
-while(feedEl.children.length>30){
-feedEl.removeChild(feedEl.firstChild);
-}
+while(feedEl.children.length>12)feedEl.removeChild(feedEl.firstChild);
 feedEl.scrollTop=feedEl.scrollHeight;
-
 feedIdx++;
-feedCount++;
-document.getElementById('feed-count').textContent=feedCount+' EVENTS';
 }
-
-// Initial burst
-for(let i=0;i<8;i++){
-setTimeout(()=>addFeedLine(),i*150);
-}
-// Then every 4 seconds
-setInterval(addFeedLine,4000);
-
-// === MAP DOT EXTRA PULSE ===
-document.querySelectorAll('.map-dot .dot').forEach(dot=>{
-setInterval(()=>{
-dot.style.filter='brightness(1.5)';
-setTimeout(()=>dot.style.filter='',200);
-},3000+Math.random()*4000);
-});
+for(let i=0;i<6;i++)setTimeout(()=>addFeed(),i*200);
+setInterval(addFeed,5000);
 </script>
 </body>
 </html>
