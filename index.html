@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNERGY SMART HOME | AI-Powered Operations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #141922;
+            --bg-card-hover: #1a1f2e;
+            --border: #2a3441;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-dim: #5f6368;
+            --accent-blue: #4a9eff;
+            --accent-green: #34a853;
+            --accent-yellow: #fbbc04;
+            --accent-red: #ea4335;
+            --accent-purple: #a142f4;
+            --success: #34a853;
+            --warning: #fbbc04;
+            --danger: #ea4335;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .roles {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        
+        .role {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .role-label {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        
+        .role-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .role-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(74, 158, 255, 0.1);
+        }
+        
+        .nav-btn.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+        
+        /* Main Content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        /* Stats */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* AI Status Banner */
+        .ai-status {
+            background: linear-gradient(135deg, rgba(52, 168, 83, 0.2) 0%, rgba(74, 158, 255, 0.2) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .ai-pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .ai-status-text {
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        /* Lead/Project Lists */
+        .list-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .list-item:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+        
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .list-item-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .list-item-value {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+        
+        .list-item-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+        
+        .meta-item {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .meta-item strong {
+            color: var(--text-primary);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-new { background: rgba(74, 158, 255, 0.2); color: var(--accent-blue); }
+        .badge-contacted { background: rgba(161, 66, 244, 0.2); color: var(--accent-purple); }
+        .badge-consultation { background: rgba(251, 188, 4, 0.2); color: var(--accent-yellow); }
+        .badge-quoted { background: rgba(251, 188, 4, 0.2); color: var(--accent-yellow); }
+        .badge-won { background: rgba(52, 168, 83, 0.2); color: var(--accent-green); }
+        .badge-active { background: rgba(52, 168, 83, 0.2); color: var(--accent-green); }
+        .badge-complete { background: rgba(154, 160, 166, 0.2); color: var(--text-secondary); }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            transition: width 0.6s ease;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 2px solid var(--border);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:hover {
+            background: var(--bg-card-hover);
+        }
+        
+        /* Chart Placeholder */
+        .chart {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            height: 200px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            max-width: 60px;
+            background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        
+        .chart-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        /* Log Feed */
+        .log-feed {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 1rem;
+            border-left: 3px solid var(--accent-blue);
+            margin-bottom: 1rem;
+            background: rgba(74, 158, 255, 0.05);
+            border-radius: 0 8px 8px 0;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .log-time {
+            color: var(--accent-blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .log-text {
+            color: var(--text-primary);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.4s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-section-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            
+            .brand {
+                font-size: 1.2rem;
+            }
+            
+            main {
+                padding: 1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .roles {
+                gap: 1rem;
+            }
+            
+            .chart-bars {
+                gap: 0.5rem;
+            }
+        }
+        
+        /* Review Stars */
+        .stars {
+            color: var(--accent-yellow);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        /* Schedule Item */
+        .schedule-item {
+            padding: 1rem;
+            background: rgba(74, 158, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 0.75rem;
+        }
+        
+        .schedule-date {
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+        
+        .schedule-project {
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .schedule-sub {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="brand">SYNERGY SMART HOME | AI-POWERED OPERATIONS</div>
+            <div class="tagline">You close deals. AI runs everything else.</div>
+            <div class="roles">
+                <div class="role">
+                    <div class="role-icon"></div>
+                    <div>
+                        <span class="role-label">Founder & Rainmaker:</span>
+                        <span class="role-value">Stephen Schnugg</span>
+                    </div>
+                </div>
+                <div class="role">
+                    <div class="role-icon"></div>
+                    <div>
+                        <span class="role-label">Chief Operating Officer:</span>
+                        <span class="role-value">AI Agent System</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <button class="nav-btn active" data-section="dashboard">COMMAND CENTER</button>
+            <button class="nav-btn" data-section="leads">LEADS & CRM</button>
+            <button class="nav-btn" data-section="projects">PROJECTS</button>
+            <button class="nav-btn" data-section="subcontractors">SUBCONTRACTORS</button>
+            <button class="nav-btn" data-section="financials">FINANCIALS</button>
+            <button class="nav-btn" data-section="marketing">MARKETING</button>
+            <button class="nav-btn" data-section="ailog">AI OPERATIONS</button>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- COMMAND CENTER -->
+        <section id="dashboard" class="section active">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    <strong>All systems running.</strong> 3 leads followed up. 2 proposals sent. 1 review collected today.
+                </div>
+            </div>
+            
+            <!-- Pipeline & Revenue Stats -->
+            <div class="grid grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">New Leads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Quoted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Completed Q1</div>
+                </div>
+            </div>
+            
+            <!-- Revenue -->
+            <div class="grid grid-3" style="margin-top: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-value">$47,200</div>
+                    <div class="stat-label">MTD Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$142,800</div>
+                    <div class="stat-label">QTD Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$142,800</div>
+                    <div class="stat-label">YTD Revenue</div>
+                </div>
+            </div>
+            
+            <!-- Performance Metrics -->
+            <div class="grid grid-3" style="margin-top: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-value">$8,900</div>
+                    <div class="stat-label">Avg Job Value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">34%</div>
+                    <div class="stat-label">Close Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.9 ⭐</div>
+                    <div class="stat-label">Google Rating (47)</div>
+                </div>
+            </div>
+            
+            <!-- Today's Schedule & Cash Flow -->
+            <div class="grid grid-2" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <div class="card-title">Today's Schedule</div>
+                    <div class="schedule-item">
+                        <div class="schedule-date">8:00 AM</div>
+                        <div class="schedule-project">Pre-Wire - 1247 Peachtree St, Buckhead</div>
+                        <div class="schedule-sub">Subcontractor: Mike Reynolds Electric</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-date">11:30 AM</div>
+                        <div class="schedule-project">Trim-Out - 892 Highland Ave, Midtown</div>
+                        <div class="schedule-sub">Subcontractor: TechPro AV</div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-date">2:00 PM</div>
+                        <div class="schedule-project">Consultation - 456 Roswell Rd, Sandy Springs</div>
+                        <div class="schedule-sub">Whole-home automation estimate</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Cash Flow</div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-secondary);">Outstanding</span>
+                            <span style="color: var(--accent-yellow); font-weight: 700; font-size: 1.2rem;">$23,400</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-secondary);">Overdue</span>
+                            <span style="color: var(--accent-red); font-weight: 700; font-size: 1.2rem;">$4,200</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-secondary);">Collected MTD</span>
+                            <span style="color: var(--accent-green); font-weight: 700; font-size: 1.2rem;">$47,200</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">Pending Deposits</span>
+                            <span style="color: var(--accent-blue); font-weight: 700; font-size: 1.2rem;">$18,500</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- LEADS & CRM -->
+        <section id="leads" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    AI is actively nurturing 8 leads. Average response time: 42 seconds.
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('sarah')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Sarah Chen</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Motorized Shades</span>
+                            <span class="meta-item"><strong>Value:</strong> $8,400</span>
+                            <span class="meta-item"><strong>Location:</strong> Buckhead</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-contacted">Contacted</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Follow-up #2 sent - 14 hours ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Auto-follow-up scheduled in 3 days
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('marcus')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Marcus Williams</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Whole-Home Audio</span>
+                            <span class="meta-item"><strong>Value:</strong> $12,200</span>
+                            <span class="meta-item"><strong>Location:</strong> Alpharetta</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-quoted">Quoted</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Proposal sent - 2 days ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Follow-up call scheduled for tomorrow
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('jennifer')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Jennifer Martinez</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Home Theater</span>
+                            <span class="meta-item"><strong>Value:</strong> $28,500</span>
+                            <span class="meta-item"><strong>Location:</strong> Sandy Springs</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-consultation">Consultation</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Consultation booked - 5 hours ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> On-site consultation Friday 2pm
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('david')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">David Thompson</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> AV Pre-Wire</span>
+                            <span class="meta-item"><strong>Value:</strong> $15,800</span>
+                            <span class="meta-item"><strong>Location:</strong> Brookhaven</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-new">New</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Auto-responded in 38 seconds - 3 hours ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Awaiting response to booking link
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('amanda')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Amanda Foster - Keystone Builders</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Builder Partnership</span>
+                            <span class="meta-item"><strong>Value:</strong> $45,000+</span>
+                            <span class="meta-item"><strong>Location:</strong> Multiple</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-quoted">Quoted</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Builder package sent - 1 week ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Stephen to call personally this week
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('robert')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Robert Kim</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Lighting Control</span>
+                            <span class="meta-item"><strong>Value:</strong> $6,200</span>
+                            <span class="meta-item"><strong>Location:</strong> Decatur</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-contacted">Contacted</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Portfolio shared - 4 days ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Follow-up #3 tomorrow
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('lisa')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Lisa Patel</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Smart Home Retrofit</span>
+                            <span class="meta-item"><strong>Value:</strong> $22,400</span>
+                            <span class="meta-item"><strong>Location:</strong> Midtown</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-new">New</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Auto-responded in 45 seconds - 6 hours ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Awaiting response
+                </div>
+            </div>
+            
+            <div class="list-item" onclick="openLeadModal('michael')">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Michael Anderson</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Project:</strong> Crestron Automation</span>
+                            <span class="meta-item"><strong>Value:</strong> $34,500</span>
+                            <span class="meta-item"><strong>Location:</strong> Buckhead</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-quoted">Quoted</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Last AI Action:</strong> Custom proposal sent - 3 days ago
+                </div>
+                <div style="color: var(--accent-blue); font-size: 0.9rem;">
+                    <strong>Next Step:</strong> Decision expected this week
+                </div>
+            </div>
+        </section>
+        
+        <!-- PROJECTS -->
+        <section id="projects" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    6 active projects on track. All clients auto-updated today.
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Buckhead Theater Room</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Patterson Family</span>
+                            <span class="meta-item"><strong>Value:</strong> $18,500</span>
+                            <span class="meta-item"><strong>Location:</strong> 1247 Peachtree St</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Trim-Out</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 65%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Est. Completion: Jan 15</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> TechPro AV (Mike Davis)
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Auto-updated yesterday - "Trim-out in progress"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Midtown Whole-Home Audio</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Rodriguez Family</span>
+                            <span class="meta-item"><strong>Value:</strong> $12,200</span>
+                            <span class="meta-item"><strong>Location:</strong> 892 Highland Ave</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Programming</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 85%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Est. Completion: Jan 8</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> Metro Sound Systems (Jason Lee)
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Auto-updated today - "Final programming underway"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Alpharetta Motorized Shades</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Johnson Residence</span>
+                            <span class="meta-item"><strong>Value:</strong> $6,800</span>
+                            <span class="meta-item"><strong>Location:</strong> 2341 Westside Pkwy</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-complete">Final Walk</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 95%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Completion: Tomorrow</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> Precision Shade & Blind (Carlos Martinez)
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Final walk scheduled for tomorrow 10am
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Sandy Springs New Build</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Chen Family</span>
+                            <span class="meta-item"><strong>Value:</strong> $24,300</span>
+                            <span class="meta-item"><strong>Location:</strong> 789 Roswell Rd</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Pre-Wire</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 40%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Est. Completion: Feb 12</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> Mike Reynolds Electric
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Auto-updated 2 days ago - "Pre-wire started"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Brookhaven Lutron Lighting</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Williams Estate</span>
+                            <span class="meta-item"><strong>Value:</strong> $9,400</span>
+                            <span class="meta-item"><strong>Location:</strong> 1523 Peachtree Circle</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Rough-In</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 55%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Est. Completion: Jan 22</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 55%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> Elite Lighting Solutions (Brad Thompson)
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Auto-updated yesterday - "Rough-in complete"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Decatur Smart Home Retrofit</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Client:</strong> Taylor Residence</span>
+                            <span class="meta-item"><strong>Value:</strong> $16,900</span>
+                            <span class="meta-item"><strong>Location:</strong> 445 College Ave</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Deposit Received</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Progress: 15%</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Est. Completion: Feb 28</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 15%;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <strong>Assigned:</strong> TechPro AV (Mike Davis)
+                    </div>
+                    <div style="color: var(--accent-green); font-size: 0.9rem;">
+                        <strong>Client Status:</strong> Welcome email sent - Timeline confirmed
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SUBCONTRACTORS -->
+        <section id="subcontractors" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    All subcontractors active. 1099 tracking up to date.
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Mike Reynolds Electric</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Specialty:</strong> Pre-Wire, Low Voltage</span>
+                            <span class="meta-item"><strong>Rating:</strong> ⭐ 4.9/5.0</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Available</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">YTD Payments</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$34,200</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Jobs Completed</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">18</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">W-9 on File</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">✓ Yes</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">1099 Status</div>
+                        <div style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem;">Ready</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong>Upcoming:</strong> Pre-wire at 1247 Peachtree (Today), Rough-in at 789 Roswell (Thu)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">TechPro AV (Mike Davis)</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Specialty:</strong> Home Theater, Distributed Audio</span>
+                            <span class="meta-item"><strong>Rating:</strong> ⭐ 5.0/5.0</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Available</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">YTD Payments</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$42,800</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Jobs Completed</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">15</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">W-9 on File</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">✓ Yes</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">1099 Status</div>
+                        <div style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem;">Ready</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong>Upcoming:</strong> Trim-out at 1247 Peachtree (Today), Programming at 445 College (Next week)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Precision Shade & Blind (Carlos Martinez)</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Specialty:</strong> Motorized Shades, Lutron</span>
+                            <span class="meta-item"><strong>Rating:</strong> ⭐ 4.8/5.0</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Available</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">YTD Payments</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$28,600</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Jobs Completed</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">22</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">W-9 on File</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">✓ Yes</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">1099 Status</div>
+                        <div style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem;">Ready</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong>Upcoming:</strong> Final walk at 2341 Westside (Tomorrow)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Elite Lighting Solutions (Brad Thompson)</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Specialty:</strong> Lutron, Crestron Lighting</span>
+                            <span class="meta-item"><strong>Rating:</strong> ⭐ 4.7/5.0</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Available</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">YTD Payments</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$19,400</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Jobs Completed</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">12</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">W-9 on File</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">✓ Yes</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">1099 Status</div>
+                        <div style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem;">Ready</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong>Upcoming:</strong> Trim-out at 1523 Peachtree Circle (Fri)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-item-header">
+                    <div>
+                        <div class="list-item-title">Metro Sound Systems (Jason Lee)</div>
+                        <div class="list-item-meta">
+                            <span class="meta-item"><strong>Specialty:</strong> Audio/Video, Crestron Programming</span>
+                            <span class="meta-item"><strong>Rating:</strong> ⭐ 4.9/5.0</span>
+                        </div>
+                    </div>
+                    <span class="badge badge-active">Available</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">YTD Payments</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$31,200</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Jobs Completed</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem;">14</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">W-9 on File</div>
+                        <div style="color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">✓ Yes</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">1099 Status</div>
+                        <div style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem;">Ready</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong>Upcoming:</strong> Final programming at 892 Highland (Today)
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- FINANCIALS -->
+        <section id="financials" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    Books balanced. All 1099s ready for tax season.
+                </div>
+            </div>
+            
+            <!-- P&L Summary -->
+            <div class="card">
+                <div class="card-title">Profit & Loss Summary - Q1 2026</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th style="text-align: right;">Amount</th>
+                                <th style="text-align: right;">% of Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Total Revenue</strong></td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$142,800</td>
+                                <td style="text-align: right;">100%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Home Theater</td>
+                                <td style="text-align: right;">$52,400</td>
+                                <td style="text-align: right;">36.7%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Motorized Shades</td>
+                                <td style="text-align: right;">$38,200</td>
+                                <td style="text-align: right;">26.7%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">AV Pre-Wire</td>
+                                <td style="text-align: right;">$28,600</td>
+                                <td style="text-align: right;">20.0%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Lighting Control</td>
+                                <td style="text-align: right;">$16,400</td>
+                                <td style="text-align: right;">11.5%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Smart Home Automation</td>
+                                <td style="text-align: right;">$7,200</td>
+                                <td style="text-align: right;">5.1%</td>
+                            </tr>
+                            <tr style="border-top: 2px solid var(--border);">
+                                <td><strong>Cost of Goods Sold</strong></td>
+                                <td style="text-align: right; color: var(--accent-red); font-weight: 700;">($57,120)</td>
+                                <td style="text-align: right;">40%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Subcontractor Labor</strong></td>
+                                <td style="text-align: right; color: var(--accent-red); font-weight: 700;">($42,840)</td>
+                                <td style="text-align: right;">30%</td>
+                            </tr>
+                            <tr style="border-top: 2px solid var(--border);">
+                                <td><strong>Gross Profit</strong></td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700; font-size: 1.1rem;">$42,840</td>
+                                <td style="text-align: right; font-weight: 700;">30%</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td><strong>Operating Expenses</strong></td>
+                                <td style="text-align: right; color: var(--accent-red);">($8,568)</td>
+                                <td style="text-align: right;">6%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Software & Tools</td>
+                                <td style="text-align: right;">($594)</td>
+                                <td style="text-align: right;">0.4%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Marketing</td>
+                                <td style="text-align: right;">($1,500)</td>
+                                <td style="text-align: right;">1.0%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Insurance</td>
+                                <td style="text-align: right;">($1,800)</td>
+                                <td style="text-align: right;">1.3%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Vehicle & Travel</td>
+                                <td style="text-align: right;">($2,400)</td>
+                                <td style="text-align: right;">1.7%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 2rem;">Other</td>
+                                <td style="text-align: right;">($2,274)</td>
+                                <td style="text-align: right;">1.6%</td>
+                            </tr>
+                            <tr style="border-top: 2px solid var(--border);">
+                                <td><strong>Net Profit</strong></td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700; font-size: 1.2rem;">$34,272</td>
+                                <td style="text-align: right; font-weight: 700; font-size: 1.1rem;">24%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Revenue Trend -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">Revenue Trend - Last 6 Months</div>
+                <div class="chart">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 40%;">
+                            <div class="chart-bar-value">$32K</div>
+                            <div class="chart-bar-label">Aug</div>
+                        </div>
+                        <div class="chart-bar" style="height: 55%;">
+                            <div class="chart-bar-value">$44K</div>
+                            <div class="chart-bar-label">Sep</div>
+                        </div>
+                        <div class="chart-bar" style="height: 48%;">
+                            <div class="chart-bar-value">$38K</div>
+                            <div class="chart-bar-label">Oct</div>
+                        </div>
+                        <div class="chart-bar" style="height: 70%;">
+                            <div class="chart-bar-value">$56K</div>
+                            <div class="chart-bar-label">Nov</div>
+                        </div>
+                        <div class="chart-bar" style="height: 60%;">
+                            <div class="chart-bar-value">$48K</div>
+                            <div class="chart-bar-label">Dec</div>
+                        </div>
+                        <div class="chart-bar" style="height: 59%;">
+                            <div class="chart-bar-value">$47K</div>
+                            <div class="chart-bar-label">Jan (MTD)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Outstanding Invoices -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">Outstanding Invoices</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Client</th>
+                                <th>Project</th>
+                                <th style="text-align: right;">Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#1048</td>
+                                <td>Patterson Family</td>
+                                <td>Theater Room Progress</td>
+                                <td style="text-align: right;">$9,250</td>
+                                <td>Jan 10, 2026</td>
+                                <td><span class="badge badge-contacted">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>#1046</td>
+                                <td>Chen Family</td>
+                                <td>New Build Deposit</td>
+                                <td style="text-align: right;">$12,150</td>
+                                <td>Jan 8, 2026</td>
+                                <td><span class="badge badge-contacted">Pending</span></td>
+                            </tr>
+                            <tr style="background: rgba(234, 67, 53, 0.1);">
+                                <td>#1042</td>
+                                <td>Williams Estate</td>
+                                <td>Lighting Final</td>
+                                <td style="text-align: right;">$4,200</td>
+                                <td>Dec 28, 2025</td>
+                                <td><span class="badge" style="background: rgba(234, 67, 53, 0.2); color: var(--accent-red);">OVERDUE</span></td>
+                            </tr>
+                            <tr>
+                                <td>#1049</td>
+                                <td>Johnson Residence</td>
+                                <td>Shades Final Payment</td>
+                                <td style="text-align: right;">$2,000</td>
+                                <td>Jan 12, 2026</td>
+                                <td><span class="badge badge-contacted">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <span style="color: var(--text-secondary);">Total Outstanding:</span>
+                        <span style="color: var(--accent-yellow); font-weight: 700; margin-left: 0.5rem;">$27,600</span>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-secondary);">Overdue:</span>
+                        <span style="color: var(--accent-red); font-weight: 700; margin-left: 0.5rem;">$4,200</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 1099 Tracker -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">1099 Contractor Tracker - YTD 2026</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Contractor</th>
+                                <th style="text-align: right;">YTD Payments</th>
+                                <th>W-9 Status</th>
+                                <th>1099 Required</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TechPro AV (Mike Davis)</td>
+                                <td style="text-align: right; font-weight: 700;">$42,800</td>
+                                <td><span class="badge badge-won">✓ On File</span></td>
+                                <td><span class="badge badge-active">Yes</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mike Reynolds Electric</td>
+                                <td style="text-align: right; font-weight: 700;">$34,200</td>
+                                <td><span class="badge badge-won">✓ On File</span></td>
+                                <td><span class="badge badge-active">Yes</span></td>
+                            </tr>
+                            <tr>
+                                <td>Metro Sound Systems</td>
+                                <td style="text-align: right; font-weight: 700;">$31,200</td>
+                                <td><span class="badge badge-won">✓ On File</span></td>
+                                <td><span class="badge badge-active">Yes</span></td>
+                            </tr>
+                            <tr>
+                                <td>Precision Shade & Blind</td>
+                                <td style="text-align: right; font-weight: 700;">$28,600</td>
+                                <td><span class="badge badge-won">✓ On File</span></td>
+                                <td><span class="badge badge-active">Yes</span></td>
+                            </tr>
+                            <tr>
+                                <td>Elite Lighting Solutions</td>
+                                <td style="text-align: right; font-weight: 700;">$19,400</td>
+                                <td><span class="badge badge-won">✓ On File</span></td>
+                                <td><span class="badge badge-active">Yes</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- MARKETING & REPUTATION -->
+        <section id="marketing" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    3 social posts scheduled this week. SEO ranking improving.
+                </div>
+            </div>
+            
+            <!-- Google Reviews -->
+            <div class="card">
+                <div class="card-title">Google Reviews Performance</div>
+                <div class="grid grid-3">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 700; color: var(--accent-yellow); margin-bottom: 0.5rem;">4.9</div>
+                        <div class="stars">★★★★★</div>
+                        <div style="color: var(--text-secondary); margin-top: 0.5rem;">47 Reviews</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent-green); margin-bottom: 0.5rem;">+3</div>
+                        <div style="color: var(--text-secondary);">This Month</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 0.5rem;">78%</div>
+                        <div style="color: var(--text-secondary);">Response Rate</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;"><strong>Recent Reviews</strong></div>
+                    
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>Jessica M.</strong>
+                            <span class="stars" style="font-size: 0.9rem;">★★★★★</span>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; font-style: italic;">
+                            "Synergy installed motorized shades throughout our Buckhead home. Professional, on-time, and the Lutron system is incredible. Highly recommend!"
+                        </div>
+                        <div style="color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem;">2 days ago</div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>Ryan P.</strong>
+                            <span class="stars" style="font-size: 0.9rem;">★★★★★</span>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; font-style: italic;">
+                            "Best home theater install in Atlanta. Stephen's team did a flawless pre-wire and the final result is theater-quality. Worth every penny."
+                        </div>
+                        <div style="color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem;">5 days ago</div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>Amanda K.</strong>
+                            <span class="stars" style="font-size: 0.9rem;">★★★★★</span>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; font-style: italic;">
+                            "Crestron whole-home system in our Sandy Springs house. Communication was excellent, work was clean, and they trained us on everything."
+                        </div>
+                        <div style="color: var(--text-dim); font-size: 0.8rem; margin-top: 0.5rem;">1 week ago</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social Media & Website -->
+            <div class="grid grid-2" style="margin-top: 1.5rem;">
+                <div class="card">
+                    <div class="card-title">Social Media Performance</div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Instagram Followers</span>
+                            <span style="font-weight: 700;">1,247</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Facebook Followers</span>
+                            <span style="font-weight: 700;">892</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Posts This Week</span>
+                            <span style="font-weight: 700; color: var(--accent-green);">3 Scheduled</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">Engagement Rate</span>
+                            <span style="font-weight: 700;">6.2%</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1rem; background: rgba(74, 158, 255, 0.1); border: 1px solid var(--accent-blue); border-radius: 8px;">
+                        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;"><strong>Next AI-Generated Post (Mon 11am)</strong></div>
+                        <div style="color: var(--text-primary); font-size: 0.95rem; font-style: italic;">
+                            "Just wrapped up a stunning Lutron lighting install in Brookhaven 💡 Whole-home control from one app. See the transformation in our stories! #AtlantaSmartHome #LutronLighting #HomeAutomation"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">Website & SEO</div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Monthly Visitors</span>
+                            <span style="font-weight: 700;">1,842</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Form Submissions</span>
+                            <span style="font-weight: 700; color: var(--accent-green);">18</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-secondary);">Conversion Rate</span>
+                            <span style="font-weight: 700;">2.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">Avg. Session</span>
+                            <span style="font-weight: 700;">3:42</span>
+                        </div>
+                    </div>
+                    
+                    <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.75rem;"><strong>Top SEO Rankings</strong></div>
+                    <div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.9rem;">"smart home Atlanta"</span>
+                        <span style="color: var(--accent-green); font-weight: 700;">#3</span>
+                    </div>
+                    <div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.9rem;">"motorized shades Atlanta"</span>
+                        <span style="color: var(--accent-green); font-weight: 700;">#2</span>
+                    </div>
+                    <div style="padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 4px; display: flex; justify-content: space-between;">
+                        <span style="font-size: 0.9rem;">"Crestron dealer Atlanta"</span>
+                        <span style="color: var(--accent-green); font-weight: 700;">#1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lead Sources -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">Lead Sources - Last 30 Days</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th style="text-align: right;">Leads</th>
+                                <th style="text-align: right;">Conversions</th>
+                                <th style="text-align: right;">Close Rate</th>
+                                <th style="text-align: right;">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Google Organic</td>
+                                <td style="text-align: right;">12</td>
+                                <td style="text-align: right;">4</td>
+                                <td style="text-align: right;">33%</td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$28,400</td>
+                            </tr>
+                            <tr>
+                                <td>Builder Referrals</td>
+                                <td style="text-align: right;">6</td>
+                                <td style="text-align: right;">3</td>
+                                <td style="text-align: right;">50%</td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$47,800</td>
+                            </tr>
+                            <tr>
+                                <td>Client Referrals</td>
+                                <td style="text-align: right;">4</td>
+                                <td style="text-align: right;">2</td>
+                                <td style="text-align: right;">50%</td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$16,200</td>
+                            </tr>
+                            <tr>
+                                <td>Instagram</td>
+                                <td style="text-align: right;">3</td>
+                                <td style="text-align: right;">1</td>
+                                <td style="text-align: right;">33%</td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$8,400</td>
+                            </tr>
+                            <tr>
+                                <td>Google Business</td>
+                                <td style="text-align: right;">2</td>
+                                <td style="text-align: right;">1</td>
+                                <td style="text-align: right;">50%</td>
+                                <td style="text-align: right; color: var(--accent-green); font-weight: 700;">$12,200</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- AI OPERATIONS LOG -->
+        <section id="ailog" class="section">
+            <div class="ai-status">
+                <div class="ai-pulse"></div>
+                <div class="ai-status-text">
+                    Real-time operations feed. AI is working 24/7 so Stephen doesn't have to.
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Today's AI Activity Log</div>
+                <div class="log-feed">
+                    <div class="log-entry">
+                        <div class="log-time">4:30 PM</div>
+                        <div class="log-text">Builder nurture email sent to 3 contacts: Keystone Builders, Peachtree Homes, Summit Custom.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">3:45 PM</div>
+                        <div class="log-text">Social media post scheduled for Monday 11am: "Lutron lighting install in Brookhaven"</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">3:00 PM</div>
+                        <div class="log-text">Review request sent to Johnson Residence (Alpharetta Shades project). Previous result: 5-star review received.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">2:15 PM</div>
+                        <div class="log-text">Invoice #1047 paid. $6,800 collected from Rodriguez Family. Payment confirmation sent.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">1:30 PM</div>
+                        <div class="log-text">Follow-up #2 sent to Robert Kim (Decatur Lighting project). Last contact: 4 days ago. No response yet.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">12:45 PM</div>
+                        <div class="log-text">Project update sent to Chen Family: "Pre-wire phase started today. Expected completion: Jan 22."</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">11:00 AM</div>
+                        <div class="log-text">Subcontractor Mike Reynolds confirmed for Thursday pre-wire at 789 Roswell Rd. Calendar updated.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">10:30 AM</div>
+                        <div class="log-text">Generated proposal for Marcus Williams. Whole-home audio system with Crestron integration. Value: $8,400. Sent for Stephen's review.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">9:42 AM</div>
+                        <div class="log-text">Consultation booked: Jennifer Martinez, Sandy Springs. Home theater project. Scheduled for Friday 2pm.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">9:15 AM</div>
+                        <div class="log-text">Sent follow-up #3 to Sarah Chen (Buckhead Motorized Shades). No response in 5 days. Next follow-up scheduled for Jan 12.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">9:02 AM</div>
+                        <div class="log-text">New lead from website: Lisa Patel, Midtown. Smart home retrofit inquiry. Auto-responded in 38 seconds with booking link and portfolio.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">8:30 AM</div>
+                        <div class="log-text">Daily schedule compiled and sent to Stephen's phone: 3 jobs today (Pre-wire at Peachtree, Trim-out at Highland, Consultation at Roswell).</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">8:00 AM</div>
+                        <div class="log-text">Reminder sent to Patterson Family: Trim-out scheduled for today at 1247 Peachtree St. TechPro AV will be on-site at 11:30am.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">7:15 AM</div>
+                        <div class="log-text">Invoice reminder sent: Williams Estate (Invoice #1042, $4,200 overdue). Stephen flagged for personal follow-up.</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-time">6:30 AM</div>
+                        <div class="log-text">Morning analytics compiled: Pipeline health check, cash flow summary, today's priorities. Dashboard updated.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Lead Detail Modal -->
+    <div id="leadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalLeadName"></div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalLeadContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Navigation
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetSection = btn.dataset.section;
+                
+                // Update nav
+                navBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update sections
+                sections.forEach(s => s.classList.remove('active'));
+                document.getElementById(targetSection).classList.add('active');
+            });
+        });
+        
+        // Lead Modal Data
+        const leadData = {
+            sarah: {
+                name: "Sarah Chen",
+                project: "Motorized Shades - Master & Living Room",
+                value: "$8,400",
+                location: "1842 Peachtree Rd NE, Buckhead",
+                stage: "Contacted",
+                source: "Google Organic Search",
+                firstContact: "Jan 2, 2026 2:34 PM",
+                timeline: "3-6 months",
+                details: "Interested in Lutron Palladiom motorized shades for master bedroom and living room. New construction closing in March. Wants blackout in bedroom, solar shades in living room.",
+                aiActions: [
+                    "Jan 2, 2:35 PM - Auto-responded in 42 seconds with portfolio link",
+                    "Jan 3, 10:00 AM - Follow-up #1: Shared similar Buckhead installation photos",
+                    "Jan 5, 2:00 PM - Follow-up #2: Offered consultation booking link",
+                ],
+                nextStep: "Follow-up #3 scheduled for Jan 9 if no response"
+            },
+            marcus: {
+                name: "Marcus Williams",
+                project: "Whole-Home Audio System",
+                value: "$12,200",
+                location: "456 Westside Pkwy, Alpharetta",
+                stage: "Quoted",
+                source: "Builder Referral (Keystone Builders)",
+                firstContact: "Dec 28, 2025",
+                timeline: "Ready now",
+                details: "6-zone distributed audio system with Crestron control. 4BR home, wants indoor/outdoor speakers. Premium equipment preferred.",
+                aiActions: [
+                    "Dec 28, 3:15 PM - Auto-responded in 38 seconds",
+                    "Dec 29, 11:00 AM - Consultation booked and completed",
+                    "Jan 2, 9:00 AM - Custom proposal generated and sent",
+                    "Jan 4, 10:30 AM - Follow-up: Asked if he had questions",
+                ],
+                nextStep: "Stephen to call personally tomorrow for close"
+            },
+            jennifer: {
+                name: "Jennifer Martinez",
+                project: "Dedicated Home Theater",
+                value: "$28,500",
+                location: "892 Mount Paran Rd, Sandy Springs",
+                stage: "Consultation Scheduled",
+                source: "Instagram",
+                firstContact: "Jan 5, 2026 4:12 PM",
+                timeline: "1-3 months",
+                details: "Basement theater room conversion. Wants 7.2.4 Dolby Atmos, 4K projector, acoustic treatment, Crestron control. Saw theater install on Instagram.",
+                aiActions: [
+                    "Jan 5, 4:13 PM - Auto-responded in 38 seconds",
+                    "Jan 5, 4:45 PM - Client replied with details",
+                    "Jan 5, 5:30 PM - AI sent booking link and portfolio",
+                    "Jan 5, 6:00 PM - Client booked consultation for Jan 10, 2pm",
+                ],
+                nextStep: "On-site consultation Friday 2pm. Stephen to prepare estimate."
+            },
+            david: {
+                name: "David Thompson",
+                project: "New Construction AV Pre-Wire",
+                value: "$15,800",
+                location: "1523 Dresden Dr, Brookhaven",
+                stage: "New",
+                source: "Google Business Profile",
+                firstContact: "Jan 6, 2026 12:34 PM",
+                timeline: "Now - Pre-wire needed ASAP",
+                details: "New build breaking ground next week. Needs whole-home AV pre-wire, CAT6 throughout, speaker wire for 8 zones, theater room pre-wire. Builder is Summit Custom.",
+                aiActions: [
+                    "Jan 6, 12:35 PM - Auto-responded in 38 seconds with availability",
+                    "Jan 6, 12:40 PM - Sent builder partnership info and booking link",
+                ],
+                nextStep: "Awaiting response. Follow-up scheduled for tomorrow if no reply."
+            },
+            amanda: {
+                name: "Amanda Foster - Keystone Builders",
+                project: "Builder Partnership - Multiple Projects",
+                value: "$45,000+ annually",
+                location: "Multiple Atlanta locations",
+                stage: "Quoted",
+                source: "Direct outreach",
+                firstContact: "Dec 15, 2025",
+                timeline: "Ongoing partnership",
+                details: "Keystone builds 12-15 custom homes per year in Buckhead, Sandy Springs, Alpharetta. Looking for preferred AV/automation partner. Standard package: pre-wire, distributed audio, motorized shades, lighting control.",
+                aiActions: [
+                    "Dec 15, 2:00 PM - Initial meeting completed (Stephen)",
+                    "Dec 16, 9:00 AM - AI sent builder partnership package",
+                    "Dec 20, 10:00 AM - Follow-up with case studies",
+                    "Dec 28, 2:00 PM - Amanda requested pricing template",
+                    "Dec 30, 11:00 AM - AI sent custom pricing sheet",
+                ],
+                nextStep: "Stephen to call personally this week to finalize agreement"
+            },
+            robert: {
+                name: "Robert Kim",
+                project: "Lutron Lighting Control",
+                value: "$6,200",
+                location: "789 E Ponce de Leon Ave, Decatur",
+                stage: "Contacted",
+                source: "Client Referral",
+                firstContact: "Jan 1, 2026",
+                timeline: "Just researching",
+                details: "Whole-home Lutron RadioRA3 system. 18 zones. Wants keypads in key rooms, app control, integration with existing Sonos.",
+                aiActions: [
+                    "Jan 1, 3:00 PM - Auto-responded with portfolio",
+                    "Jan 3, 10:00 AM - Follow-up #1 with Lutron benefits article",
+                    "Jan 5, 2:00 PM - Follow-up #2 with recent Decatur project photos",
+                ],
+                nextStep: "Follow-up #3 tomorrow. If no response, mark as long-term nurture."
+            },
+            lisa: {
+                name: "Lisa Patel",
+                project: "Smart Home Retrofit",
+                value: "$22,400",
+                location: "1125 Piedmont Ave, Midtown",
+                stage: "New",
+                source: "Website Contact Form",
+                firstContact: "Jan 6, 2026 9:00 AM",
+                timeline: "1-3 months",
+                details: "Existing home retrofit. Wants Crestron whole-home control, motorized shades in 6 rooms, distributed audio, lighting control, security cameras integration.",
+                aiActions: [
+                    "Jan 6, 9:01 AM - Auto-responded in 45 seconds",
+                    "Jan 6, 9:05 AM - Sent retrofit portfolio and booking link",
+                ],
+                nextStep: "Awaiting response. Follow-up scheduled for Jan 8."
+            },
+            michael: {
+                name: "Michael Anderson",
+                project: "Crestron Whole-Home Automation",
+                value: "$34,500",
+                location: "2341 Peachtree Battle Ave, Buckhead",
+                stage: "Quoted",
+                source: "Google Organic",
+                firstContact: "Dec 20, 2025",
+                timeline: "Ready now",
+                details: "Complete Crestron Home system. 5BR estate. Lighting, HVAC, security, AV, shades all integrated. Premium client, budget not a concern.",
+                aiActions: [
+                    "Dec 20, 4:00 PM - Auto-responded immediately",
+                    "Dec 21, 10:00 AM - Consultation completed (Stephen)",
+                    "Dec 23, 2:00 PM - Custom proposal generated and sent",
+                    "Dec 27, 10:00 AM - Follow-up call (Stephen)",
+                    "Jan 3, 11:00 AM - AI sent additional Crestron case studies",
+                ],
+                nextStep: "Decision expected this week. High-priority follow-up."
+            }
+        };
+        
+        function openLeadModal(leadKey) {
+            const lead = leadData[leadKey];
+            if (!lead) return;
+            
+            document.getElementById('modalLeadName').textContent = lead.name;
+            
+            const content = `
+                <div class="modal-section">
+                    <div class="modal-section-title">Project</div>
+                    <div class="modal-section-content">${lead.project}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Estimated Value</div>
+                    <div class="modal-section-content" style="color: var(--accent-green); font-weight: 700; font-size: 1.2rem;">${lead.value}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Location</div>
+                    <div class="modal-section-content">${lead.location}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Stage</div>
+                    <div class="modal-section-content"><span class="badge badge-${lead.stage.toLowerCase().replace(' ', '')}">${lead.stage}</span></div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Lead Source</div>
+                    <div class="modal-section-content">${lead.source}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">First Contact</div>
+                    <div class="modal-section-content">${lead.firstContact}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Timeline</div>
+                    <div class="modal-section-content">${lead.timeline}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Project Details</div>
+                    <div class="modal-section-content">${lead.details}</div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">AI Activity History</div>
+                    <div class="modal-section-content">
+                        ${lead.aiActions.map(action => `<div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">${action}</div>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <div class="modal-section-title">Next Step</div>
+                    <div class="modal-section-content" style="color: var(--accent-blue); font-weight: 600;">${lead.nextStep}</div>
+                </div>
+            `;
+            
+            document.getElementById('modalLeadContent').innerHTML = content;
+            document.getElementById('leadModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('leadModal').classList.remove('active');
+        }
+        
+        // Close modal on outside click
+        document.getElementById('leadModal').addEventListener('click', (e) => {
+            if (e.target.id === 'leadModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
