@@ -169,39 +169,55 @@ padding:4px 12px;letter-spacing:1px;z-index:2;flex-shrink:0}
 .ticker-content span{padding:0 24px}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ===== ATLANTA HEAT MAP ===== */
-.map-widget{position:relative;min-height:420px}
-.map-widget .widget-title{position:relative;z-index:2;display:flex;align-items:center;gap:8px}
-.map-legend{display:flex;gap:12px;margin-left:auto;font-size:9px;align-items:center}
+/* ===== ATLANTA HEAT MAP - PALANTIR STYLE ===== */
+.map-widget{position:relative;min-height:420px;background:radial-gradient(ellipse at 45% 55%, rgba(0,255,200,.03) 0%, transparent 70%)}
+.map-widget .widget-title{position:relative;z-index:2;display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;letter-spacing:1.5px;font-size:11px;text-transform:uppercase}
+.map-legend{display:flex;gap:14px;margin-left:auto;font-size:9px;align-items:center;font-family:'Courier New',monospace}
 .map-legend-item{display:flex;align-items:center;gap:4px;color:var(--muted)}
 .map-legend-dot{width:8px;height:8px;border-radius:50%}
-.map-svg-wrap{flex:1;position:relative;overflow:hidden;border-radius:12px}
-.map-svg{width:100%;height:100%;min-height:360px}
+.map-svg-wrap{flex:1;position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(0,255,200,.08);aspect-ratio:600/440;max-height:500px}
+.map-svg{width:100%;height:100%;background:#080c14}
 
 /* Map neighborhoods */
-.neighborhood-label{font-size:10px;fill:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;pointer-events:none}
-.neighborhood-zone{fill:rgba(255,255,255,.02);stroke:rgba(255,255,255,.04);stroke-width:1;rx:8}
+.neighborhood-label{font-size:11px;fill:rgba(0,255,200,.7);font-weight:700;letter-spacing:2px;text-transform:uppercase;pointer-events:none;font-family:'Courier New',monospace}
+.neighborhood-zone{fill:rgba(0,255,200,.03);stroke:rgba(0,255,200,.12);stroke-width:1;rx:4}
+.neighborhood-zone:hover{fill:rgba(0,255,200,.06);stroke:rgba(0,255,200,.25)}
+.neighborhood-value{font-size:9px;fill:rgba(0,168,255,.8);font-family:'Courier New',monospace;font-weight:600}
+
+/* Map grid */
+.map-grid-line{stroke:rgba(0,255,200,.04);stroke-width:.5}
+.map-grid-line-major{stroke:rgba(0,255,200,.08);stroke-width:.5}
 
 /* Map connectors */
-.map-connector{stroke:rgba(255,255,255,.04);stroke-width:1;stroke-dasharray:4 4}
+.map-connector{stroke:rgba(0,255,200,.15);stroke-width:1;stroke-dasharray:4 4}
+
+/* Heat zones - radial glows behind neighborhoods */
+.heat-zone{mix-blend-mode:screen;pointer-events:none}
 
 /* Project dots */
 .project-dot{cursor:pointer;transition:transform .2s ease}
-.project-dot:hover{transform:scale(1.3)}
-.dot-active{fill:var(--green)}
-.dot-quoted{fill:none;stroke:var(--warn);stroke-width:2;stroke-dasharray:4 3}
-.dot-completed{fill:var(--blue)}
-.dot-newlead{fill:none;stroke:var(--blue);stroke-width:2;stroke-dasharray:4 3}
-.dot-glow{fill:none;stroke:var(--green);stroke-width:1;opacity:.4;animation:dotPulse 2s ease-in-out infinite}
-@keyframes dotPulse{0%,100%{r:18;opacity:.4}50%{r:28;opacity:0}}
+.project-dot:hover{transform:scale(1.4)}
+.dot-active{fill:#00ffc8;filter:drop-shadow(0 0 6px rgba(0,255,200,.8))}
+.dot-quoted{fill:none;stroke:#ffaa00;stroke-width:2;stroke-dasharray:4 3;filter:drop-shadow(0 0 4px rgba(255,170,0,.5))}
+.dot-completed{fill:#00a8ff;filter:drop-shadow(0 0 6px rgba(0,168,255,.8))}
+.dot-newlead{fill:none;stroke:#00a8ff;stroke-width:2;stroke-dasharray:4 3;filter:drop-shadow(0 0 4px rgba(0,168,255,.5))}
+.dot-glow{fill:rgba(0,255,200,.08);stroke:rgba(0,255,200,.4);stroke-width:1;animation:dotPulse 2s ease-in-out infinite}
+.dot-ring{fill:none;stroke:rgba(0,255,200,.15);stroke-width:.5;animation:ringExpand 3s ease-out infinite}
+@keyframes dotPulse{0%,100%{opacity:.3}50%{opacity:.8}}
+@keyframes ringExpand{0%{r:12;opacity:.5;stroke-width:2}100%{r:35;opacity:0;stroke-width:.5}}
+
+/* Scanline overlay */
+.map-scanline{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,200,.01) 2px,rgba(0,255,200,.01) 4px);border-radius:12px}
 
 /* Tooltip */
-.map-tooltip{position:absolute;background:rgba(10,14,23,.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);
-border-radius:10px;padding:8px 12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap}
+.map-tooltip{position:absolute;background:rgba(8,12,20,.95);backdrop-filter:blur(12px);border:1px solid rgba(0,255,200,.25);
+border-radius:6px;padding:10px 14px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap;
+box-shadow:0 0 20px rgba(0,255,200,.1),0 4px 12px rgba(0,0,0,.5);font-family:'Courier New',monospace}
 .map-tooltip.show{opacity:1}
-.tooltip-name{font-size:11px;font-weight:600;color:#fff}
-.tooltip-val{font-size:10px;color:var(--cyan);margin-top:2px}
-.tooltip-status{font-size:9px;color:var(--muted);margin-top:1px}
+.tooltip-name{font-size:11px;font-weight:700;color:#00ffc8;letter-spacing:.5px}
+.tooltip-val{font-size:12px;color:#fff;margin-top:3px;font-weight:700}
+.tooltip-status{font-size:9px;color:rgba(0,168,255,.8);margin-top:2px;text-transform:uppercase;letter-spacing:1px}
 
 /* ===== PROJECT DETAIL PANEL ===== */
 .panel-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -644,68 +660,155 @@ Atlanta Metro — Active Projects
 </div>
 </div>
 <div class="map-svg-wrap">
+<div class="map-scanline"></div>
 <svg class="map-svg" viewBox="0 0 600 440" id="atlMap">
 <defs>
 <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
-<path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,.02)" stroke-width=".5"/>
+<path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0,255,200,.04)" stroke-width=".5"/>
 </pattern>
-<radialGradient id="heatGlow" cx="50%" cy="50%" r="50%">
-<stop offset="0%" stop-color="rgba(16,185,129,.06)"/>
+<pattern id="gridMajor" width="90" height="90" patternUnits="userSpaceOnUse">
+<path d="M 90 0 L 0 0 0 90" fill="none" stroke="rgba(0,255,200,.08)" stroke-width=".5"/>
+</pattern>
+<radialGradient id="heatBuckhead" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(0,255,200,.18)"/>
+<stop offset="40%" stop-color="rgba(0,255,200,.08)"/>
 <stop offset="100%" stop-color="transparent"/>
 </radialGradient>
+<radialGradient id="heatSandy" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(0,168,255,.12)"/>
+<stop offset="50%" stop-color="rgba(0,168,255,.04)"/>
+<stop offset="100%" stop-color="transparent"/>
+</radialGradient>
+<radialGradient id="heatMid" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(0,255,200,.10)"/>
+<stop offset="50%" stop-color="rgba(0,255,200,.03)"/>
+<stop offset="100%" stop-color="transparent"/>
+</radialGradient>
+<radialGradient id="heatSmall" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="rgba(0,168,255,.08)"/>
+<stop offset="60%" stop-color="rgba(0,168,255,.02)"/>
+<stop offset="100%" stop-color="transparent"/>
+</radialGradient>
+<filter id="glow2"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="heatBlur"><feGaussianBlur stdDeviation="20"/></filter>
 </defs>
+
+<!-- Base grid -->
+<rect width="600" height="440" fill="#080c14"/>
 <rect width="600" height="440" fill="url(#grid)"/>
-<ellipse cx="280" cy="260" rx="120" ry="80" fill="url(#heatGlow)"/>
-<line x1="300" y1="70" x2="300" y2="150" class="map-connector"/>
-<line x1="300" y1="150" x2="280" y2="220" class="map-connector"/>
-<line x1="280" y1="220" x2="280" y2="310" class="map-connector"/>
-<line x1="300" y1="150" x2="440" y2="230" class="map-connector"/>
-<line x1="280" y1="260" x2="470" y2="300" class="map-connector"/>
+<rect width="600" height="440" fill="url(#gridMajor)"/>
+
+<!-- Coordinate labels -->
+<text x="8" y="15" fill="rgba(0,255,200,.15)" font-size="8" font-family="'Courier New',monospace">33.88°N</text>
+<text x="8" y="435" fill="rgba(0,255,200,.15)" font-size="8" font-family="'Courier New',monospace">33.74°N</text>
+<text x="520" y="435" fill="rgba(0,255,200,.15)" font-size="8" font-family="'Courier New',monospace">84.30°W</text>
+
+<!-- Heat zones - layered radial glows for intensity -->
+<!-- Buckhead - HOTTEST (3 projects, highest value) -->
+<ellipse cx="285" cy="260" rx="130" ry="90" fill="rgba(0,255,200,.04)"/>
+<ellipse cx="285" cy="260" rx="95" ry="65" fill="rgba(0,255,200,.06)"/>
+<ellipse cx="285" cy="260" rx="60" ry="40" fill="rgba(0,255,200,.08)"/>
+<!-- Sandy Springs - WARM (2 projects) -->
+<ellipse cx="300" cy="155" rx="95" ry="55" fill="rgba(0,168,255,.03)"/>
+<ellipse cx="300" cy="155" rx="60" ry="35" fill="rgba(0,168,255,.06)"/>
+<!-- Midtown - MODERATE (1 project, good value) -->
+<ellipse cx="280" cy="360" rx="80" ry="45" fill="rgba(0,255,200,.03)"/>
+<ellipse cx="280" cy="360" rx="50" ry="28" fill="rgba(0,255,200,.06)"/>
+<!-- Alpharetta -->
+<ellipse cx="300" cy="60" rx="70" ry="40" fill="rgba(0,168,255,.03)"/>
+<ellipse cx="300" cy="60" rx="40" ry="22" fill="rgba(0,168,255,.05)"/>
+<!-- Brookhaven -->
+<ellipse cx="472" cy="228" rx="70" ry="38" fill="rgba(0,168,255,.03)"/>
+<ellipse cx="472" cy="228" rx="40" ry="22" fill="rgba(0,168,255,.05)"/>
+<!-- Decatur -->
+<ellipse cx="475" cy="308" rx="70" ry="38" fill="rgba(0,168,255,.03)"/>
+<ellipse cx="475" cy="308" rx="40" ry="22" fill="rgba(0,168,255,.05)"/>
+
+<!-- Connection lines between neighborhoods -->
+<line x1="300" y1="80" x2="300" y2="130" class="map-connector"/>
+<line x1="300" y1="175" x2="280" y2="220" class="map-connector"/>
+<line x1="280" y1="295" x2="280" y2="340" class="map-connector"/>
+<line x1="340" y1="155" x2="430" y2="215" class="map-connector"/>
+<line x1="380" y1="270" x2="430" y2="295" class="map-connector"/>
+
+<!-- Neighborhood zones -->
 <rect x="240" y="30" width="120" height="60" class="neighborhood-zone"/>
-<text x="300" y="55" text-anchor="middle" class="neighborhood-label">Alpharetta</text>
-<rect x="220" y="120" width="160" height="70" class="neighborhood-zone"/>
-<text x="300" y="145" text-anchor="middle" class="neighborhood-label">Sandy Springs</text>
-<rect x="190" y="210" width="180" height="100" class="neighborhood-zone"/>
-<text x="280" y="235" text-anchor="middle" class="neighborhood-label">Buckhead</text>
+<text x="300" y="52" text-anchor="middle" class="neighborhood-label">Alpharetta</text>
+<text x="300" y="75" text-anchor="middle" class="neighborhood-value">$6.8K · 1 PROJECT</text>
+
+<rect x="215" y="115" width="170" height="75" class="neighborhood-zone"/>
+<text x="300" y="140" text-anchor="middle" class="neighborhood-label">Sandy Springs</text>
+<text x="300" y="172" text-anchor="middle" class="neighborhood-value">$37.6K · 2 PROJECTS</text>
+
+<rect x="185" y="210" width="200" height="100" class="neighborhood-zone"/>
+<text x="285" y="232" text-anchor="middle" class="neighborhood-label">Buckhead</text>
+<text x="285" y="298" text-anchor="middle" class="neighborhood-value">$41.1K · 3 PROJECTS</text>
+
 <rect x="210" y="330" width="140" height="60" class="neighborhood-zone"/>
-<text x="280" y="355" text-anchor="middle" class="neighborhood-label">Midtown</text>
-<rect x="400" y="190" width="140" height="65" class="neighborhood-zone"/>
-<text x="470" y="215" text-anchor="middle" class="neighborhood-label">Brookhaven</text>
-<rect x="410" y="280" width="130" height="60" class="neighborhood-zone"/>
-<text x="475" y="305" text-anchor="middle" class="neighborhood-label">Decatur</text>
+<text x="280" y="352" text-anchor="middle" class="neighborhood-label">Midtown</text>
+<text x="280" y="378" text-anchor="middle" class="neighborhood-value">$12.2K · 1 PROJECT</text>
+
+<rect x="400" y="195" width="145" height="65" class="neighborhood-zone"/>
+<text x="472" y="218" text-anchor="middle" class="neighborhood-label">Brookhaven</text>
+<text x="472" y="245" text-anchor="middle" class="neighborhood-value">$15.8K · 1 NEW LEAD</text>
+
+<rect x="405" y="278" width="140" height="60" class="neighborhood-zone"/>
+<text x="475" y="300" text-anchor="middle" class="neighborhood-label">Decatur</text>
+<text x="475" y="325" text-anchor="middle" class="neighborhood-value">$9.4K · 1 PROJECT</text>
+
+<!-- Project dots - Alpharetta -->
 <g class="project-dot" data-project="6" onclick="openPanel(6)">
-<circle cx="300" cy="70" r="18" class="dot-glow"/>
-<circle cx="300" cy="70" r="6" class="dot-active" filter="url(#glow)"/>
+<circle cx="300" cy="60" r="20" class="dot-glow"/>
+<circle cx="300" cy="60" r="25" class="dot-ring"/>
+<circle cx="300" cy="60" r="7" class="dot-active"/>
 </g>
+
+<!-- Sandy Springs: Retrofit (active) + New Build (quoted) -->
 <g class="project-dot" data-project="4" onclick="openPanel(4)">
-<circle cx="280" cy="160" r="18" class="dot-glow"/>
-<circle cx="280" cy="160" r="6" class="dot-active" filter="url(#glow)"/>
+<circle cx="278" cy="152" r="18" class="dot-glow"/>
+<circle cx="278" cy="152" r="22" class="dot-ring"/>
+<circle cx="278" cy="152" r="6" class="dot-active"/>
 </g>
 <g class="project-dot" data-project="5" onclick="openPanel(5)">
-<circle cx="340" cy="168" r="11" class="dot-quoted"/>
+<circle cx="325" cy="158" r="12" class="dot-quoted"/>
 </g>
+
+<!-- Buckhead: Theater (active, big), Pre-Wire (active, big), Shades (active, med) -->
 <g class="project-dot" data-project="0" onclick="openPanel(0)">
-<circle cx="260" cy="265" r="22" class="dot-glow"/>
-<circle cx="260" cy="265" r="8" class="dot-active" filter="url(#glow)"/>
+<circle cx="245" cy="258" r="24" class="dot-glow"/>
+<circle cx="245" cy="258" r="30" class="dot-ring"/>
+<circle cx="245" cy="258" r="9" class="dot-active"/>
 </g>
 <g class="project-dot" data-project="1" onclick="openPanel(1)">
-<circle cx="300" cy="280" r="22" class="dot-glow"/>
-<circle cx="300" cy="280" r="8" class="dot-active" filter="url(#glow)"/>
+<circle cx="305" cy="270" r="22" class="dot-glow"/>
+<circle cx="305" cy="270" r="28" class="dot-ring" style="animation-delay:.5s"/>
+<circle cx="305" cy="270" r="8" class="dot-active"/>
 </g>
 <g class="project-dot" data-project="2" onclick="openPanel(2)">
-<circle cx="340" cy="258" r="18" class="dot-glow"/>
-<circle cx="340" cy="258" r="6" class="dot-active" filter="url(#glow)"/>
+<circle cx="345" cy="252" r="18" class="dot-glow"/>
+<circle cx="345" cy="252" r="22" class="dot-ring" style="animation-delay:1s"/>
+<circle cx="345" cy="252" r="6" class="dot-active"/>
 </g>
+
+<!-- Midtown -->
 <g class="project-dot" data-project="3" onclick="openPanel(3)">
-<circle cx="280" cy="365" r="22" class="dot-glow"/>
-<circle cx="280" cy="365" r="8" class="dot-active" filter="url(#glow)"/>
+<circle cx="280" cy="360" r="22" class="dot-glow"/>
+<circle cx="280" cy="360" r="28" class="dot-ring"/>
+<circle cx="280" cy="360" r="8" class="dot-active"/>
 </g>
+
+<!-- Decatur (near complete) -->
 <g class="project-dot" data-project="7" onclick="openPanel(7)">
-<circle cx="475" cy="315" r="6" class="dot-completed" filter="url(#glow)"/>
+<circle cx="475" cy="308" r="7" class="dot-completed"/>
 </g>
+
+<!-- Brookhaven (new lead) -->
 <g class="project-dot" data-project="8" onclick="openPanel(8)">
-<circle cx="470" cy="230" r="8" class="dot-newlead"/>
+<circle cx="472" cy="228" r="9" class="dot-newlead"/>
 </g>
+
+<!-- Status readout -->
+<text x="15" y="430" fill="rgba(0,255,200,.4)" font-size="9" font-family="'Courier New',monospace">ZONES: 6 | ACTIVE: 9 | TOTAL VALUE: $124.3K | HEAT INDEX: HIGH</text>
 </svg>
 <div class="map-tooltip" id="mapTooltip">
 <div class="tooltip-name" id="ttName"></div>
